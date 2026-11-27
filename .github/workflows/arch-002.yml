@@ -1,0 +1,45 @@
+name: ARCH-002 build
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.13'
+      - uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407
+        with:
+          packages: 'platform-tools'
+          log-accepted-android-sdk-licenses: 'false'
+      - name: Verify and prepare toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          java -version
+          python3.13 --version
+          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+          curl --fail --silent --show-error --location https://services.gradle.org/distributions/gradle-8.11.1-bin.zip -o /tmp/gradle.zip
+          curl --fail --silent --show-error --location https://services.gradle.org/distributions/gradle-8.11.1-bin.zip.sha256 -o /tmp/gradle.sha256
+          printf '%s  %s\n' "$(cat /tmp/gradle.sha256)" /tmp/gradle.zip | sha256sum -c -
+          unzip -q /tmp/gradle.zip -d /tmp
+      - name: Compile both debug APKs
+        run: /tmp/gradle-8.11.1/bin/gradle --no-daemon :reader:assembleDebug :executor:assembleDebug
+      - name: Inspect package identities and permissions
+        shell: bash
+        run: |
+          set -euo pipefail
+          tool="$ANDROID_HOME/build-tools/35.0.0/aapt"
+          "$tool" dump badging reader/build/outputs/apk/debug/reader-debug.apk
+          "$tool" dump badging executor/build/outputs/apk/debug/executor-debug.apk
+          "$tool" dump permissions executor/build/outputs/apk/debug/executor-debug.apk > /tmp/executor-permissions
+          cat /tmp/executor-permissions
+          if grep -q android.permission.INTERNET /tmp/executor-permissions; then exit 1; fi
