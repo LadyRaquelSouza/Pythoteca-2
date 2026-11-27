@@ -18,3 +18,8 @@ def network_denied():
             return 1
         raise
     return 0
+
+
+def endless():
+    while True:
+        pass
