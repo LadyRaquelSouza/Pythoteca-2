@@ -1,0 +1,5 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="br.com.pythoteca.experimental.reader.permission.BIND_EXECUTOR"/>
+    <queries><package android:name="br.com.pythoteca.experimental.executor"/></queries>
+    <application android:allowBackup="false"/>
+</manifest>
