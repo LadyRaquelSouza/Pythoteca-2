@@ -32,7 +32,7 @@ jobs:
           printf '%s  %s\n' "$(cat /tmp/gradle.sha256)" /tmp/gradle.zip | sha256sum -c -
           unzip -q /tmp/gradle.zip -d /tmp
       - name: Compile both debug APKs
-        run: /tmp/gradle-8.11.1/bin/gradle --no-daemon :reader:assembleDebug :executor:assembleDebug
+        run: /tmp/gradle-8.11.1/bin/gradle --no-daemon :reader:assembleDebug :executor:assembleDebug :reader:assembleDebugAndroidTest :ipc-test:assembleDebug :ipc-test:assembleDebugAndroidTest
       - name: Inspect package identities and permissions
         shell: bash
         run: |
@@ -55,4 +55,4 @@ jobs:
           arch: x86_64
           target: google_apis
           disable-animations: true
-          script: bash tests/ipc-smoke.sh
+          script: bash tests/ipc-smoke.sh && bash tests/ipc-negative.sh
