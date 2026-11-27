@@ -7,6 +7,7 @@ android {
     namespace = "br.com.pythoteca.experimental.reader"
     compileSdk = 35
     defaultConfig {
+        testInstrumentationRunner = "br.com.pythoteca.experimental.reader.ProtocolTest"
         applicationId = "br.com.pythoteca.experimental.reader"
         minSdk = 29
         targetSdk = 35
