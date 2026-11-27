@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.material3.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -22,7 +23,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Button(onClick = { client.start() }) { Text(status.value) }
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Button(onClick = { client.start() }) { Text(status.value) }
+                        Button(onClick = { client.start(true) }) { Text("Testar Python") }
+                    }
                 }
             }
         }
