@@ -11,12 +11,14 @@ public class ProtocolTest extends Instrumentation {
         HandlerThread thread = new HandlerThread("probe");
         thread.start();
         Context c = getTargetContext();
+        BlockingQueue<Messenger> connections = new LinkedBlockingQueue<>();
+        CountDownLatch disconnected = new CountDownLatch(1);
         CountDownLatch connected = new CountDownLatch(1);
         BlockingQueue<Message> replies = new LinkedBlockingQueue<>();
         Messenger[] remote = new Messenger[1];
         ServiceConnection conn = new ServiceConnection() {
-            public void onServiceConnected(ComponentName n, IBinder b) { remote[0] = new Messenger(b); connected.countDown(); }
-            public void onServiceDisconnected(ComponentName n) {}
+            public void onServiceConnected(ComponentName n, IBinder b) { remote[0] = new Messenger(b); connections.add(remote[0]); connected.countDown(); }
+            public void onServiceDisconnected(ComponentName n) { disconnected.countDown(); }
         };
         boolean bound = false;
         try {
@@ -42,7 +44,27 @@ public class ProtocolTest extends Instrumentation {
                 if(p[1]==Protocol.PYTHON_RESULT && (!response.getData().containsKey("value") || response.getData().getInt("value")!=p[2])) throw new AssertionError("Unexpected probe value: "+p[0]);
                 session++;
             }
-            result.putString("stream","PYTHOTECA_INVALID_MESSAGES_DENIED\nPYTHOTECA_PYTHON_EXCEPTION_RECOVERED\nPYTHOTECA_PYTHON_NETWORK_DENIED");
+            connections.clear();
+            Message loop = Message.obtain(null,Protocol.PYTHON_ENDLESS_PROBE,Protocol.VERSION,30);
+            loop.replyTo=reply; remote[0].send(loop);
+            Message started=replies.poll(25,TimeUnit.SECONDS);
+            int uid=c.getPackageManager().getPackageUid(Protocol.EXECUTOR,0);
+            if(started==null || started.what!=Protocol.PYTHON_STARTED || started.arg1!=Protocol.VERSION || started.arg2!=30 || started.sendingUid!=uid) throw new AssertionError("Loop not started");
+            int oldPid=started.getData().getInt("pid");
+            long start=SystemClock.elapsedRealtime();
+            Message concurrent=Message.obtain(null,Protocol.PYTHON_PROBE,Protocol.VERSION,31);
+            concurrent.replyTo=reply; remote[0].send(concurrent);
+            Message busy=replies.poll(3,TimeUnit.SECONDS);
+            if(busy==null || busy.what!=Protocol.PYTHON_BUSY || busy.arg1!=Protocol.VERSION || busy.arg2!=31 || busy.sendingUid!=uid) throw new AssertionError("Concurrent request not rejected");
+            if(!disconnected.await(12,TimeUnit.SECONDS)) throw new AssertionError("Watchdog did not terminate service");
+            if(SystemClock.elapsedRealtime()-start<3000) throw new AssertionError("Premature death");
+            Messenger recovered=connections.poll(25,TimeUnit.SECONDS);
+            if(recovered==null) throw new AssertionError("No reconnect");
+            Message again=Message.obtain(null,Protocol.PYTHON_PROBE,Protocol.VERSION,32);
+            again.replyTo=reply; recovered.send(again);
+            Message answer=replies.poll(25,TimeUnit.SECONDS);
+            if(answer==null || answer.what!=Protocol.PYTHON_RESULT || answer.arg1!=Protocol.VERSION || answer.arg2!=32 || answer.sendingUid!=uid || answer.getData().getInt("value")!=42 || oldPid<=0 || answer.getData().getInt("pid")<=0 || answer.getData().getInt("pid")==oldPid) throw new AssertionError("Recovery failed");
+            result.putString("stream","PYTHOTECA_WATCHDOG_OK\\nPYTHOTECA_BUSY_OK\\nPYTHOTECA_PROCESS_RECOVERY_OK\\nPYTHOTECA_INVALID_MESSAGES_DENIED\nPYTHOTECA_PYTHON_EXCEPTION_RECOVERED\nPYTHOTECA_PYTHON_NETWORK_DENIED");
             finish(Activity.RESULT_OK,result);
         } catch(Throwable e) { result.putString("stream",e.toString()); finish(Activity.RESULT_CANCELED,result); }
         finally { if(bound)c.unbindService(conn); thread.quitSafely(); }
