@@ -3,6 +3,9 @@ set -euo pipefail
 page=$(adb shell getconf PAGE_SIZE | tr -d '\r')
 echo "PAGE_SIZE=$page"
 test "$page" = 16384
+adb root
+adb wait-for-device
+test "$(adb shell id -u | tr -d '\r')" = 0
 adb shell setprop bionic.linker.16kb.app_compat.enabled false
 adb shell setprop pm.16kb.app_compat.disabled true
 test "$(adb shell getprop bionic.linker.16kb.app_compat.enabled | tr -d '\r')" = false
