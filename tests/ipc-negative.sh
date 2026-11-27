@@ -5,7 +5,7 @@ adb install ipc-test/build/outputs/apk/debug/ipc-test-debug.apk
 adb install ipc-test/build/outputs/apk/androidTest/debug/ipc-test-debug-androidTest.apk
 run_test() {
   local output
-  output=$(timeout 60 adb shell am instrument -w "$1")
+  output=$(timeout 60 adb shell am instrument -w -r "$1")
   printf '%s\n' "$output"
   grep -q "$2" <<< "$output"
   grep -q 'INSTRUMENTATION_CODE: -1' <<< "$output"
