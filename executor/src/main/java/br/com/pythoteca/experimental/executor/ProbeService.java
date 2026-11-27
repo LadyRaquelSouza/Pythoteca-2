@@ -20,24 +20,35 @@ public final class ProbeService extends Service {
         }
     }
 
-    private final AtomicBoolean running = new AtomicBoolean();
+    private static final AtomicBoolean running = new AtomicBoolean();
     private final Messenger endpoint = new Messenger(new Handler(Looper.getMainLooper(), msg -> {
-        if (!trusted(msg.sendingUid) || (msg.what != Protocol.PING && msg.what != Protocol.PYTHON_PROBE && msg.what != Protocol.PYTHON_FAIL_PROBE && msg.what != Protocol.PYTHON_NETWORK_PROBE)
+        if (!trusted(msg.sendingUid) || (msg.what != Protocol.PING && msg.what != Protocol.PYTHON_PROBE && msg.what != Protocol.PYTHON_FAIL_PROBE && msg.what != Protocol.PYTHON_NETWORK_PROBE && msg.what != Protocol.PYTHON_ENDLESS_PROBE)
                 || msg.arg1 != Protocol.VERSION || msg.arg2 <= 0 || msg.replyTo == null) {
             return true;
         }
         if (msg.what != Protocol.PING) {
-            if (!running.compareAndSet(false, true)) return true;
+            if (!running.compareAndSet(false, true)) {
+                try { msg.replyTo.send(Message.obtain(null, Protocol.PYTHON_BUSY, Protocol.VERSION, msg.arg2)); }
+                catch (RemoteException ignored) {}
+                return true;
+            }
             final Messenger target = msg.replyTo;
             final int session = msg.arg2;
-            final String function = msg.what == Protocol.PYTHON_FAIL_PROBE ? "fail" : msg.what == Protocol.PYTHON_NETWORK_PROBE ? "network_denied" : "answer";
+            final boolean endless = msg.what == Protocol.PYTHON_ENDLESS_PROBE;
+            final String function = endless ? "endless" : msg.what == Protocol.PYTHON_FAIL_PROBE ? "fail" : msg.what == Protocol.PYTHON_NETWORK_PROBE ? "network_denied" : "answer";
             new Thread(() -> {
                 Message response;
                 try {
                     if (!Python.isStarted()) Python.start(new AndroidPlatform(getApplicationContext()));
+                    if (endless) {
+                        new Handler(Looper.getMainLooper()).postDelayed(() -> android.os.Process.killProcess(android.os.Process.myPid()), 5000);
+                        Message started = Message.obtain(null, Protocol.PYTHON_STARTED, Protocol.VERSION, session);
+                        Bundle info = new Bundle(); info.putInt("pid", android.os.Process.myPid()); started.setData(info);
+                        try { target.send(started); } catch (RemoteException ignored) {}
+                    }
                     int value = Python.getInstance().getModule("probe").callAttr(function).toInt();
                     response = Message.obtain(null, Protocol.PYTHON_RESULT, Protocol.VERSION, session);
-                    Bundle data = new Bundle(); data.putInt("value", value); response.setData(data);
+                    Bundle data = new Bundle(); data.putInt("value", value); data.putInt("pid", android.os.Process.myPid()); response.setData(data);
                 } catch (Exception e) {
                     android.util.Log.e("PythonProbe", "Probe failed", e);
                     response = Message.obtain(null, Protocol.PYTHON_ERROR, Protocol.VERSION, session);
