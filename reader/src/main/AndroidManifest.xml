@@ -1,4 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <permission android:name="br.com.pythoteca.experimental.reader.permission.BIND_EXECUTOR" android:protectionLevel="signature"/>
+    <uses-permission android:name="br.com.pythoteca.experimental.reader.permission.BIND_EXECUTOR"/>
+    <queries><package android:name="br.com.pythoteca.experimental.executor"/></queries>
     <application android:label="Pythoteca Experimento" android:allowBackup="false">
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>

@@ -1,3 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <application android:label="Pythoteca Executor Experimento" android:allowBackup="false"/>
+    <queries><package android:name="br.com.pythoteca.experimental.reader"/></queries>
+    <application android:label="Pythoteca Executor Experimento" android:allowBackup="false">
+        <service android:name=".ProbeService" android:exported="true" android:permission="br.com.pythoteca.experimental.reader.permission.BIND_EXECUTOR"/>
+    </application>
 </manifest>

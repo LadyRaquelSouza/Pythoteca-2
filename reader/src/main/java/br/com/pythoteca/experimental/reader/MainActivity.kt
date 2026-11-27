@@ -1,6 +1,8 @@
 package br.com.pythoteca.experimental.reader
 
 import android.os.Bundle
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material3.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
@@ -11,12 +13,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 class MainActivity : ComponentActivity() {
+    private val status = mutableStateOf("Testar IPC")
+    private lateinit var client: ProbeClient
+    override fun onDestroy() { client.close(); super.onDestroy() }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        client = ProbeClient(this) { status.value = it }
         setContent {
             MaterialTheme {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("ARCH-002: Compose")
+                    Button(onClick = { client.start() }) { Text(status.value) }
                 }
             }
         }
