@@ -32,7 +32,17 @@ public class ProtocolTest extends Instrumentation {
             Message valid=Message.obtain(null,Protocol.PING,Protocol.VERSION,3); valid.replyTo=reply; remote[0].send(valid);
             Message pong=replies.poll(5,TimeUnit.SECONDS);
             if(pong==null || pong.what!=Protocol.PONG || pong.arg1!=Protocol.VERSION || pong.arg2!=3 || pong.sendingUid!=c.getPackageManager().getPackageUid(Protocol.EXECUTOR,0)) throw new AssertionError("Valid control failed");
-            result.putString("stream","PYTHOTECA_INVALID_MESSAGES_DENIED");
+            int[][] probes = {{Protocol.PYTHON_FAIL_PROBE,Protocol.PYTHON_ERROR,0},{Protocol.PYTHON_PROBE,Protocol.PYTHON_RESULT,42},{Protocol.PYTHON_NETWORK_PROBE,Protocol.PYTHON_RESULT,1},{Protocol.PYTHON_PROBE,Protocol.PYTHON_RESULT,42}};
+            int session = 10;
+            for (int[] p : probes) {
+                Message request = Message.obtain(null,p[0],Protocol.VERSION,session);
+                request.replyTo=reply; remote[0].send(request);
+                Message response=replies.poll(25,TimeUnit.SECONDS);
+                if(response==null || response.what!=p[1] || response.arg1!=Protocol.VERSION || response.arg2!=session || response.sendingUid!=c.getPackageManager().getPackageUid(Protocol.EXECUTOR,0)) throw new AssertionError("Probe failed: "+p[0]);
+                if(p[1]==Protocol.PYTHON_RESULT && (!response.getData().containsKey("value") || response.getData().getInt("value")!=p[2])) throw new AssertionError("Unexpected probe value: "+p[0]);
+                session++;
+            }
+            result.putString("stream","PYTHOTECA_INVALID_MESSAGES_DENIED\nPYTHOTECA_PYTHON_EXCEPTION_RECOVERED\nPYTHOTECA_PYTHON_NETWORK_DENIED");
             finish(Activity.RESULT_OK,result);
         } catch(Throwable e) { result.putString("stream",e.toString()); finish(Activity.RESULT_CANCELED,result); }
         finally { if(bound)c.unbindService(conn); thread.quitSafely(); }

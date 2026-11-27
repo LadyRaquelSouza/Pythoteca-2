@@ -12,4 +12,6 @@ public final class Protocol {
     public static final int PYTHON_PROBE = 3;
     public static final int PYTHON_RESULT = 4;
     public static final int PYTHON_ERROR = 5;
+    public static final int PYTHON_FAIL_PROBE = 6;
+    public static final int PYTHON_NETWORK_PROBE = 7;
 }
