@@ -2,9 +2,27 @@
 set -euo pipefail
 reader=br.com.pythoteca.experimental.reader
 executor=br.com.pythoteca.experimental.executor
+capture_ui() {
+  rm -f /tmp/window.xml
+  adb shell rm -f /sdcard/window.xml || return 1
+  adb shell uiautomator dump /sdcard/window.xml >/dev/null || return 1
+  adb pull /sdcard/window.xml /tmp/window.xml >/dev/null || return 1
+  test -s /tmp/window.xml
+}
+diagnostics() {
+  adb logcat -b crash -d || true
+  adb logcat -b all -d > /tmp/pythoteca-python-logcat.txt || true
+  grep -Ei 'pythoteca|chaquopy|linker|dlopen|fatal signal|AndroidRuntime|UnsatisfiedLinkError|16kb|16k page|avc: denied' /tmp/pythoteca-python-logcat.txt || true
+  adb shell dumpsys activity exit-info "$executor" || true
+  adb shell dumpsys window | grep -E 'mCurrentFocus|mFocusedApp' || true
+}
+trap 'rc=$?; if [ "$rc" -ne 0 ]; then diagnostics; fi' EXIT
 adb install reader/build/outputs/apk/debug/reader-debug.apk
 adb install executor/build/outputs/apk/debug/executor-debug.apk
 adb shell input keyevent 82
+adb shell am force-stop com.google.android.apps.nexuslauncher
+adb shell input keyevent KEYCODE_HOME
+sleep 15
 adb shell am start -W -n "$reader/.MainActivity"
 # The shell UID is not granted the signature permission.
 denial=$(adb shell am startservice -n "$executor/.ProbeService" 2>&1 || true)
@@ -13,8 +31,7 @@ grep -Ei 'permission denial|requires permission|not allowed.*permission' <<< "$d
 echo PYTHOTECA_SHELL_PERMISSION_DENIED
 # Locate the Compose button using accessibility bounds rather than fixed coordinates.
 for i in $(seq 1 20); do
-  adb shell uiautomator dump /sdcard/window.xml >/dev/null
-  adb pull /sdcard/window.xml /tmp/window.xml >/dev/null
+  if ! capture_ui; then sleep 2; continue; fi
   if coords=$(python -c 'import xml.etree.ElementTree as E,re; n=next(n for n in E.parse("/tmp/window.xml").iter("node") if n.get("text")=="Testar IPC"); a,b,c,d=map(int,re.findall(r"\d+",n.get("bounds"))); print((a+c)//2,(b+d)//2)' 2>/dev/null); then
     adb shell input tap $coords
     break
@@ -22,8 +39,7 @@ for i in $(seq 1 20); do
   sleep 1
 done
 for i in $(seq 1 20); do
-  adb shell uiautomator dump /sdcard/window.xml >/dev/null
-  adb pull /sdcard/window.xml /tmp/window.xml >/dev/null
+  if ! capture_ui; then sleep 2; continue; fi
   if grep -q 'IPC autenticado: PONG' /tmp/window.xml; then
     echo PYTHOTECA_IPC_PONG_OK
     break
@@ -36,8 +52,7 @@ adb logcat -c
 adb logcat -c
 adb shell input tap $coords
 for i in $(seq 1 20); do
-  adb shell uiautomator dump /sdcard/window.xml >/dev/null
-  adb pull /sdcard/window.xml /tmp/window.xml >/dev/null
+  if ! capture_ui; then sleep 2; continue; fi
   if grep -q 'Python: 42' /tmp/window.xml; then
     echo PYTHOTECA_PYTHON_42_OK
     exit 0
