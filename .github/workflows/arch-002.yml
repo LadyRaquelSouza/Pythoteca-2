@@ -43,3 +43,16 @@ jobs:
           "$tool" dump permissions executor/build/outputs/apk/debug/executor-debug.apk > /tmp/executor-permissions
           cat /tmp/executor-permissions
           if grep -q android.permission.INTERNET /tmp/executor-permissions; then exit 1; fi
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Android 15 IPC smoke test
+        uses: ReactiveCircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 35
+          arch: x86_64
+          target: google_apis
+          disable-animations: true
+          script: bash tests/ipc-smoke.sh
