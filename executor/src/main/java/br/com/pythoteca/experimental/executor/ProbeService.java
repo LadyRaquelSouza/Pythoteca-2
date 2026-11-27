@@ -22,19 +22,20 @@ public final class ProbeService extends Service {
 
     private final AtomicBoolean running = new AtomicBoolean();
     private final Messenger endpoint = new Messenger(new Handler(Looper.getMainLooper(), msg -> {
-        if (!trusted(msg.sendingUid) || (msg.what != Protocol.PING && msg.what != Protocol.PYTHON_PROBE)
+        if (!trusted(msg.sendingUid) || (msg.what != Protocol.PING && msg.what != Protocol.PYTHON_PROBE && msg.what != Protocol.PYTHON_FAIL_PROBE && msg.what != Protocol.PYTHON_NETWORK_PROBE)
                 || msg.arg1 != Protocol.VERSION || msg.arg2 <= 0 || msg.replyTo == null) {
             return true;
         }
-        if (msg.what == Protocol.PYTHON_PROBE) {
+        if (msg.what != Protocol.PING) {
             if (!running.compareAndSet(false, true)) return true;
             final Messenger target = msg.replyTo;
             final int session = msg.arg2;
+            final String function = msg.what == Protocol.PYTHON_FAIL_PROBE ? "fail" : msg.what == Protocol.PYTHON_NETWORK_PROBE ? "network_denied" : "answer";
             new Thread(() -> {
                 Message response;
                 try {
                     if (!Python.isStarted()) Python.start(new AndroidPlatform(getApplicationContext()));
-                    int value = Python.getInstance().getModule("probe").callAttr("answer").toInt();
+                    int value = Python.getInstance().getModule("probe").callAttr(function).toInt();
                     response = Message.obtain(null, Protocol.PYTHON_RESULT, Protocol.VERSION, session);
                     Bundle data = new Bundle(); data.putInt("value", value); response.setData(data);
                 } catch (Exception e) {
