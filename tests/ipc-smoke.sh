@@ -26,6 +26,18 @@ for i in $(seq 1 20); do
   adb pull /sdcard/window.xml /tmp/window.xml >/dev/null
   if grep -q 'IPC autenticado: PONG' /tmp/window.xml; then
     echo PYTHOTECA_IPC_PONG_OK
+    break
+  fi
+  sleep 1
+done
+grep -q 'IPC autenticado: PONG' /tmp/window.xml
+coords=$(python -c 'import xml.etree.ElementTree as E,re; n=next(n for n in E.parse("/tmp/window.xml").iter("node") if n.get("text")=="Testar Python"); a,b,c,d=map(int,re.findall(r"\d+",n.get("bounds"))); print((a+c)//2,(b+d)//2)')
+adb shell input tap $coords
+for i in $(seq 1 20); do
+  adb shell uiautomator dump /sdcard/window.xml >/dev/null
+  adb pull /sdcard/window.xml /tmp/window.xml >/dev/null
+  if grep -q 'Python: 42' /tmp/window.xml; then
+    echo PYTHOTECA_PYTHON_42_OK
     exit 0
   fi
   sleep 1
