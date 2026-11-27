@@ -14,7 +14,7 @@ for app in reader executor; do
     while IFS= read -r -d '' so; do
       count=$((count+1))
       readelf -Wl "$so" > "$tmp/headers"
-      awk '$1=="LOAD" { print; n++; if (strtonum($NF)<16384) bad=1 } END { if (!n || bad) exit 1 }' "$tmp/headers"
+      gawk '$1=="LOAD" { print; n++; if (strtonum($NF)<16384) bad=1 } END { if (!n || bad) exit 1 }' "$tmp/headers"
       echo "ELF_LOAD_16K_OK $app $abi $(basename "$so")"
     done < <(find "$tmp/$app/lib/$abi" -name '*.so' -print0)
     test "$count" -gt 0
