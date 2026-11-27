@@ -9,4 +9,7 @@ public final class Protocol {
     public static final int VERSION = 1;
     public static final int PING = 1;
     public static final int PONG = 2;
+    public static final int PYTHON_PROBE = 3;
+    public static final int PYTHON_RESULT = 4;
+    public static final int PYTHON_ERROR = 5;
 }
