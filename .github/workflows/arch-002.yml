@@ -32,10 +32,16 @@ jobs:
           unzip -q /tmp/gradle.zip -d /tmp
       - name: Generate and verify Gradle Wrapper
         run: |
-          /tmp/gradle-8.11.1/bin/gradle --no-daemon wrapper --gradle-version 8.11.1 --distribution-type bin --gradle-distribution-sha256-sum f397b287023acdba1e9f6fc5ea72d22dd63669d59ed4a289a29b1a76eee151c6
+          bootstrap=$(mktemp -d)
+          printf 'rootProject.name = "wrapper-bootstrap"\n' > "$bootstrap/settings.gradle"
+          /tmp/gradle-8.11.1/bin/gradle -p "$bootstrap" --no-daemon wrapper --gradle-version 8.11.1 --distribution-type bin --gradle-distribution-sha256-sum f397b287023acdba1e9f6fc5ea72d22dd63669d59ed4a289a29b1a76eee151c6
+          cp "$bootstrap/gradlew" "$bootstrap/gradlew.bat" .
+          mkdir -p gradle/wrapper
+          cp "$bootstrap/gradle/wrapper/"* gradle/wrapper/
+          rm -rf "$bootstrap"
           ./gradlew --version
       - name: Compile both debug APKs
-        run: ./gradlew --no-daemon :reader:assembleDebug :executor:assembleDebug :reader:assembleDebugAndroidTest :ipc-test:assembleDebug :ipc-test:assembleDebugAndroidTest
+        run: ./gradlew --no-daemon --stacktrace :reader:assembleDebug :executor:assembleDebug :reader:assembleDebugAndroidTest :ipc-test:assembleDebug :ipc-test:assembleDebugAndroidTest
       - name: Inspect package identities and permissions
         shell: bash
         run: |
