@@ -30,8 +30,12 @@ jobs:
           curl --fail --silent --show-error --location https://services.gradle.org/distributions/gradle-8.11.1-bin.zip -o /tmp/gradle.zip
           echo 'f397b287023acdba1e9f6fc5ea72d22dd63669d59ed4a289a29b1a76eee151c6  /tmp/gradle.zip' | sha256sum -c -
           unzip -q /tmp/gradle.zip -d /tmp
+      - name: Generate and verify Gradle Wrapper
+        run: |
+          /tmp/gradle-8.11.1/bin/gradle --no-daemon wrapper --gradle-version 8.11.1 --distribution-type bin --gradle-distribution-sha256-sum f397b287023acdba1e9f6fc5ea72d22dd63669d59ed4a289a29b1a76eee151c6
+          ./gradlew --version
       - name: Compile both debug APKs
-        run: /tmp/gradle-8.11.1/bin/gradle --no-daemon :reader:assembleDebug :executor:assembleDebug :reader:assembleDebugAndroidTest :ipc-test:assembleDebug :ipc-test:assembleDebugAndroidTest
+        run: ./gradlew --no-daemon :reader:assembleDebug :executor:assembleDebug :reader:assembleDebugAndroidTest :ipc-test:assembleDebug :ipc-test:assembleDebugAndroidTest
       - name: Inspect package identities and permissions
         shell: bash
         run: |
@@ -57,12 +61,24 @@ jobs:
           target: google_apis
           disable-animations: true
           script: bash tests/ipc-smoke.sh && bash tests/ipc-negative.sh
+      - name: Android 15 16KB runtime test
+        uses: ReactiveCircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 35
+          arch: x86_64
+          target: google_apis_ps16k
+          force-avd-creation: true
+          disable-animations: true
+          script: bash tests/page16k.sh
       - name: Collect tested APKs
         run: |
           mkdir -p dist
           cp reader/build/outputs/apk/debug/reader-debug.apk executor/build/outputs/apk/debug/executor-debug.apk dist/
           printf '%s\n' "$GITHUB_SHA" > dist/TESTED_COMMIT
           (cd dist && sha256sum *.apk > SHA256SUMS)
+          mkdir -p dist/wrapper/gradle
+          cp gradlew gradlew.bat dist/wrapper/
+          cp -r gradle/wrapper dist/wrapper/gradle/
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: pythoteca-experimental-${{ github.run_id }}
