@@ -58,3 +58,35 @@ O sistema operacional, dependências e dispositivo podem conter vulnerabilidades
 4. Distribuição: verificação de artefatos, certificados, dependências e riscos residuais; aprovação explícita.
 
 Falha de controle obrigatório impede integração ou distribuição da funcionalidade afetada. Exceções exigem decisão documentada, escopo e mitigação. A arquitetura definitiva, versões Android suportadas, política de assinatura de catálogo e mecanismos de contenção permanecem pendentes de ARCH-001 e experimentos técnicos.
+
+## Segurança da biblioteca online — Pythoteca-Library
+
+A biblioteca pública é uma fronteira de confiança independente do aplicativo. A leitura de conteúdo público não requer token GitHub, senha ou credencial embutida no APK. Somente o leitor acessará a rede; o executor não será intermediário de downloads.
+
+### Transporte e origem
+
+- HTTPS obrigatório, validação normal de certificados e nomes de host, sem desabilitar verificações TLS ou aceitar certificados arbitrários.
+- Permitir somente origens e caminhos explicitamente configurados para a biblioteca oficial; validar URLs normalizadas e cada redirecionamento antes de segui-lo. Rejeitar esquemas alternativos, credenciais na URL e destinos locais ou privados.
+- Não aceitar URLs arbitrárias fornecidas por aulas ou backups como destinos de download. Definir timeouts, limites de bytes efetivamente recebidos e descompactados, concorrência e política de repetição.
+- Não enviar código, progresso, identificadores pessoais ou backups à biblioteca. Reconhecer que o provedor de hospedagem pode observar IP e metadados de acesso.
+
+### Autenticidade e publicação
+
+- Requerer manifesto autenticado para distribuição de produção, com assinatura digital verificável por chave pública confiável incorporada ao leitor. Definir formato canônico, algoritmo, versionamento, rotação e revogação em decisão arquitetural posterior.
+- A chave privada de publicação não deve estar no repositório público nem disponível a workflows de PR. Separar aprovação de conteúdo, validação e assinatura; proteger branches e revisar alterações no catálogo e nos workflows.
+- Manifesto autenticado deve vincular identificadores, versões, caminhos, tamanhos e hashes SHA-256 das aulas. Verificar assinatura antes de confiar nesses campos e verificar cada aula antes de instalá-la.
+- Definir proteção contra replay e rollback, inclusive reinstalação e perda de estado local; documentar limites da verificação offline e da expiração. Não confundir HTTPS ou hashes isolados com autenticidade editorial.
+- Durante desenvolvimento, conteúdo não assinado somente em variante de teste explicitamente identificada; nenhuma opção de contornar verificação em produção.
+
+### Validação e disponibilidade
+
+- Validar esquema, versões suportadas, IDs únicos, limites de profundidade, campos, quantidade e tamanho; rejeitar caminhos relativos perigosos, colisões e conteúdo inesperado.
+- Renderizar aulas como dados, sem HTML ativo, JavaScript ou execução automática. Código de exemplo e soluções continuam não confiáveis, executáveis apenas mediante ação explícita no executor.
+- Instalar atualizações de forma atômica após todas as verificações; preservar última versão válida e progresso em caso de falha. Nunca substituir cache válido por resposta inválida ou parcial.
+- Manter acesso offline ao conteúdo previamente validado; informar falhas de atualização sem ocultar estado de confiança. Não exigir conexão permanente para estudar.
+
+### Critérios de homologação adicionais
+
+Testar certificado inválido, HTTP, redirecionamento para origem não permitida, manifesto com assinatura ausente ou inválida, chave desconhecida, hash ou tamanho divergente, versão antiga, conteúdo excessivo ou malformado, interrupção de download, falha de atualização, cache offline e ausência de execução automática. Verificar também que o executor não consegue acessar a biblioteca diretamente nem usar o leitor como proxy arbitrário.
+
+A escolha do endpoint, formato de assinatura e processo de publicação exige coordenação com Pythoteca-Library. A migração do catálogo existente deverá ser planejada sem declarar que o formato atual já satisfaz esses requisitos. Nenhuma alteração na biblioteca é autorizada por este documento.
