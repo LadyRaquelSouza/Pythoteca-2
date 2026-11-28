@@ -146,6 +146,7 @@ jobs:
             ./gradlew --offline --no-daemon ":$module:dependencies" > "inventory/$module-dependencies.txt"
           done
           python3 tests/dependency-inventory.py
+          python3 tests/native-validation.py
           ./gradlew --no-daemon -I tests/inventory-runtime.init.gradle inventoryResolvedRuntime
       - name: Preserve dependency inventory
         if: always()
