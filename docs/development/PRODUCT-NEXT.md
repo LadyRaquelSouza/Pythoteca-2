@@ -31,3 +31,6 @@ Catálogo consultado nesta sessão: 43 módulos multidisciplinares (9 arquitetur
 
 ## Próxima ação
 Iniciar BRAND/DESIGN e UI em bloco coerente; em paralelo preparar testes Suite. Consolidar capítulos pedagógicos de inventário, ELF e distribuição após evidências. Não alterar arquivos de estudo ou instalações antigas sem autorização. Critérios específicos e rollback registrados em cada implementação.
+
+## Investigação multilinguagem
+[LANG-001](LANG-001.md): contrato comum, Portugol Studio, Java 8 e emulação pedagógica Swing (LANG-002–004), com escrita autônoma e auxílio gradual. Viabilidade não demonstrada; manter Library intacta até matriz de capacidades homologada. Preparar contratos antes de consolidar formatos de exercícios, sem reduzir segurança ou interromper frentes independentes.
