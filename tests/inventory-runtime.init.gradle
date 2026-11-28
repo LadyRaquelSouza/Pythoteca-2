@@ -1,0 +1,33 @@
+// Diagnostic only: resolve selected shipped/test classpaths, not every AGP configuration.
+gradle.projectsEvaluated {
+    rootProject.tasks.register("inventoryResolvedRuntime") {
+        doLast {
+            def out = new File(rootProject.projectDir, "inventory")
+            out.mkdirs()
+            def rows = []
+            def failures = []
+            [reader: ["debugRuntimeClasspath", "debugAndroidTestRuntimeClasspath"],
+             executor: ["debugRuntimeClasspath"],
+             "ipc-test": ["debugRuntimeClasspath", "debugAndroidTestRuntimeClasspath"],
+             protocol: ["runtimeClasspath"]].each { module, names ->
+                def p = rootProject.project(":" + module)
+                names.each { name ->
+                    def cfg = p.configurations.getByName(name)
+                    def resolution = cfg.incoming.resolutionResult
+                    resolution.allDependencies.each { dep ->
+                        if (dep instanceof org.gradle.api.artifacts.result.UnresolvedDependencyResult) {
+                            failures.add([module: module, configuration: name, requested: dep.requested.displayName, error: dep.failure.message])
+                        }
+                    }
+                    def components = resolution.allComponents.collect { it.id.displayName }.sort()
+                    def artifacts = cfg.incoming.artifactView { lenient(true) }.artifacts
+                    artifacts.failures.each { failures.add([module: module, configuration: name, error: it.message]) }
+                    rows.add([module: module, configuration: name, components: components,
+                        artifacts: artifacts.artifacts.collect { [component: it.id.componentIdentifier.displayName, file: it.file.name] }.sort { it.component + it.file }])
+                }
+            }
+            new File(out, "resolved-runtime.json").text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson([configurations: rows, failures: failures]))
+            if (!failures.isEmpty()) throw new GradleException("Runtime inventory has unresolved entries: " + failures.size())
+        }
+    }
+}
