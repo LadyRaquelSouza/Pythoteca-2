@@ -14,12 +14,14 @@ PR #10 integrado em 17733b8fa87a0c40c9f3b022f40b1c371b427a35; head 5c41c49, run 
 
 Library PR #33 integrado c8d61b34; run 46095204983 aprovado. Pythoteca-2 PR #11 integrado cf29e09; run 46095232924 classificação/documentação aprovadas, todos os jobs funcionais dispensados conforme previsto.
 
-## Etapa atual: ARCH-002e3.1 (em andamento)
+## Etapa atual: ARCH-002e3.2 (próxima, ainda não iniciada)
+
+PR #12 integrado em 9a12903fec91344ce632b3c5457c213bf44fe7d3. ARCH-002e3.1 concluída experimentalmente: head f63d452, run 46095581452, tentativa 1: 10/12; tentativa 2: 12/12. Falhas intermitentes preservadas no [registro do Wrapper](ARCH-002e3.1.md).
 
 Plano detalhado: [ARCH-002e3](ARCH-002e3.md).
 
 1. PR #33 da Library concluído.
-2. Consolidar Gradle Wrapper versionado e verificar checksum e procedência.
+2. Gradle Wrapper versionado e verificado no CI: concluído.
 3. Inventariar dependências, licenças e bibliotecas nativas, inclusive conteúdo empacotado internamente; revisar alinhamento ELF e demais requisitos aplicáveis.
 4. Validar documentação oficial sobre 16 KB e propriedades de compatibilidade. Leitura das propriedades não comprova seu efeito.
 5. Testar no Moto G05 real: confirmar Android, ABI, RAM e tamanho de página; instalar APKs experimentais e registrar resultados. Não alegar homologação física antes disso.
