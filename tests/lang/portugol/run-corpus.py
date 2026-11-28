@@ -6,6 +6,10 @@ import tempfile
 import resource
 import os
 
+import sys
+engine = sys.argv[1] if len(sys.argv) > 1 else "designliquido"
+if engine not in ("designliquido", "mobile"):
+    raise SystemExit("Unknown engine")
 root = pathlib.Path(__file__).resolve().parent
 cases = json.loads((root / "corpus.json").read_text())["cases"]
 def limits():
@@ -17,7 +21,7 @@ results = []
 for case in cases:
     with tempfile.TemporaryFile() as out, tempfile.TemporaryFile() as err:
         try:
-            p = subprocess.run(["node", "--max-old-space-size=128", str(root / "run-case.cjs"), case["id"]],
+            p = subprocess.run(["node", "--max-old-space-size=128", str(root / ("run-mobile-case.mjs" if engine == "mobile" else "run-case.cjs")), case["id"]],
                                cwd=root, stdout=out, stderr=err, timeout=10, preexec_fn=limits,
                                env={"PATH": os.environ["PATH"], "HOME": "/tmp", "LANG": "C.UTF-8"})
             out.seek(0); err.seek(0)
@@ -40,4 +44,4 @@ for case in cases:
             "stdout" not in expected or row.get("stdout") == expected["stdout"])
         results.append(row)
         print(case["id"], row["status"], "exact" if row["exact_match"] else "review", flush=True)
-pathlib.Path("/results/portugol-results.json").write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n")
+pathlib.Path("/results/" + ("mobile-results.json" if engine == "mobile" else "portugol-results.json")).write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n")
