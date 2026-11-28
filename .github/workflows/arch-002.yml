@@ -106,6 +106,8 @@ jobs:
           ./gradlew --version
       - name: Test candidate execution domain contract
         run: bash tests/execution-contract.sh
+      - name: Test catalog metadata contract
+        run: bash tests/catalog-metadata.sh
       - name: Compile both debug APKs
         run: |
           set -euo pipefail
