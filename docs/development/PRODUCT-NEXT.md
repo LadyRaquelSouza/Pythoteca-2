@@ -2,6 +2,18 @@
 
 Base 88379800ef95c2527d41fb7bd6cf89a81c32b230. Meta de uso pessoal para revisão da semana de provas, sem prazo garantido ou edição descartável. Manter roadmap original e agrupar mudanças coerentes; executar frentes independentes em paralelo. Consultar implementação original privada como referência de requisitos, sem publicar material privado. Pythoteca por dentro continua apêndice pedagógico separado do catálogo.
 
+## Regra de prioridade e critérios de passagem
+
+Esclarecimento da mantenedora: a urgência das provas não autoriza desvio da Pythoteca-2 planejada, redução de segurança ou soluções descartáveis que provoquem retrabalho. A meta temporal é subordinada à arquitetura e aos critérios de aceite. Se houver conflito, adiar a entrega, não os controles necessários ao uso pretendido.
+
+- Antes de implementar cada marco, confrontar ADRs, threat model, roadmap e requisitos do original; registrar interfaces, modelo de dados, dependências, alternativas e reversão. Os novos identificadores são organização proposta, não substituição de decisões anteriores.
+- Paralelizar apenas trabalho independente. Não considerar etapa dependente homologada antes de suas precondições. ARCH-002e3 e DISTRIBUTION-001 continuam abertas com os critérios originais; resolver ou registrar bloqueios sem reclassificar falhas como sucesso.
+- Catálogo: assinatura/autenticidade e proteção contra rollback conforme ADR antes de usar conteúdo remoto como confiável no aparelho pessoal. Adaptador experimental não autenticado restrito a testes com dados não sensíveis; sem fallback em uso real. Fixar contrato e separar rede, domínio e persistência da UI.
+- Distribuição: não instalar build experimental com dados reais sem procedência verificável, identidade de assinatura adequada ao uso e testes pertinentes. Não substituir instalação original nem migrar dados sem autorização. Licenças/avisos e homologação física são gates, não tarefas esquecidas.
+- Dados e pedagogia: IDs estáveis, contratos versionados, progresso e rascunhos independentes da UI; preservar trilha intercalada, biblioteca livre, revisão e laboratório separado. Não projetar um leitor descartável limitado à revisão das provas.
+- Cada PR deve registrar critérios, evidências, limitações e próximo passo. Preservar falhas intermitentes; repetir testes não prova sua causa. Atualizar diário operacional e apêndice pedagógico por marcos; não expor dados privados.
+- A primeira entrega pode conter um subconjunto funcional definitivo, mas não atalhos de arquitetura ou segurança. Caso não seja possível cumprir os gates a tempo, manter a Pythoteca-2 em desenvolvimento e estudar por meios existentes.
+
 ## Sequência proposta
 - BRAND-001 / DESIGN-001: identidade, símbolo sujeito a aprovação, paleta verde/preto/branco/cinza, glassmorphism econômico, contraste, escalas de texto e acessibilidade.
 - UI-001: leitor Compose, navegação e biblioteca livre por disciplina, preservar diagnóstico IPC enquanto necessário.
