@@ -41,7 +41,25 @@ jobs:
           rm -rf "$bootstrap"
           ./gradlew --version
       - name: Compile both debug APKs
-        run: ./gradlew --no-daemon --stacktrace :reader:assembleDebug :executor:assembleDebug :reader:assembleDebugAndroidTest :ipc-test:assembleDebug :ipc-test:assembleDebugAndroidTest
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            echo "BUILD_ATTEMPT=$attempt"
+            if ./gradlew --no-daemon --stacktrace --info :reader:assembleDebug :executor:assembleDebug :reader:assembleDebugAndroidTest :ipc-test:assembleDebug :ipc-test:assembleDebugAndroidTest 2>&1 | tee /tmp/build-attempt-$attempt.log; then
+              exit 0
+            fi
+            if ! grep -Eq 'Plugin .* was not found|Could not resolve|Could not GET|Could not HEAD' /tmp/build-attempt-$attempt.log; then exit 1; fi
+            if [ "$attempt" = 3 ]; then exit 1; fi
+            sleep 30
+          done
+      - name: Preserve build logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: build-diagnostics
+          path: /tmp/build-attempt-*.log
+          if-no-files-found: warn
+          retention-days: 14
       - name: Inspect package identities and permissions
         shell: bash
         run: |
@@ -54,6 +72,33 @@ jobs:
           if grep -q android.permission.INTERNET /tmp/executor-permissions; then exit 1; fi
       - name: Verify native alignment and signatures
         run: bash tests/apk-inspect.sh
+      - name: Upload diagnostic APK inputs
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: diagnostic-inputs
+          path: |
+            reader/build/outputs/apk/debug/reader-debug.apk
+            executor/build/outputs/apk/debug/executor-debug.apk
+            reader/build/outputs/apk/androidTest/debug/reader-debug-androidTest.apk
+            ipc-test/build/outputs/apk/debug/ipc-test-debug.apk
+            ipc-test/build/outputs/apk/androidTest/debug/ipc-test-debug-androidTest.apk
+            gradlew
+            gradlew.bat
+            gradle/wrapper/
+          if-no-files-found: error
+          retention-days: 3
+  runtime:
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: diagnostic-inputs
+          path: .
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -67,16 +112,6 @@ jobs:
           target: google_apis
           disable-animations: true
           script: bash tests/ipc-smoke.sh && bash tests/ipc-negative.sh
-      - name: Upload diagnostic APK inputs
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: diagnostic-inputs
-          path: |
-            reader/build/outputs/apk/debug/reader-debug.apk
-            executor/build/outputs/apk/debug/executor-debug.apk
-            reader/build/outputs/apk/androidTest/debug/reader-debug-androidTest.apk
-          if-no-files-found: error
-          retention-days: 3
       - name: Android 15 16KB runtime test
         uses: ReactiveCircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
         with:
@@ -131,7 +166,6 @@ jobs:
   isolated16k:
     name: isolated16k (${{ matrix.mode }}, ${{ matrix.ram }} MB)
     needs: build
-    if: ${{ !cancelled() }}
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     strategy:
