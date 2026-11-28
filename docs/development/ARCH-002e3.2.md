@@ -25,3 +25,6 @@ Módulos reader, executor e ipc-test dependem de protocol. Executor declara arm6
 
 ## Depois
 Pendente: implementar coleta diagnóstica e executar CI; verificar artefatos, licenças e limites; atualizar Pythoteca por dentro após evidências. Não declarar inventário completo nesta fase.
+
+## Coleta experimental
+Adicionada coleta no job build após inspeção dos APKs: buildEnvironment e dependencies por módulo em modo offline, inventário JSON de entradas APK e ZIP internos até profundidade 2, SHA256 e identificação por magic ELF. Artefato dependency-inventory com retenção de 14 dias. Relatórios podem conter FAILED em configurações não resolvidas; revisar antes de aceitar. Limites: não é SBOM completo, não identifica automaticamente licenças nem formatos internos não ZIP; coleta offline pode falhar. Bateria funcional mantida. Referência histórica privada consultada para requisitos, sem copiar conteúdo privado. Aguardar CI e verificar artefato antes de merge.
