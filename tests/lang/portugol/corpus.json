@@ -100,6 +100,126 @@
       "expected": {
         "status": "timeout_or_cancelled"
       }
+    },
+    {
+      "id": "P11",
+      "title": "Espaços e quebras intencionais",
+      "source": "programa {\n funcao inicio() {\n escreva(\"A \", \" B\", \"\\n\", \"C\")\n }\n}\n",
+      "input": "",
+      "expected": {
+        "status": "completed",
+        "stdout": "A  B\nC"
+      }
+    },
+    {
+      "id": "P12",
+      "title": "Divisão inteira",
+      "source": "programa {\n funcao inicio() {\n inteiro a = 7\n inteiro b = 2\n inteiro q = a / b\n escreva(q, \":\", a % b)\n }\n}\n",
+      "input": "",
+      "expected": {
+        "status": "completed",
+        "stdout": "3:1"
+      }
+    },
+    {
+      "id": "P13",
+      "title": "Divisão real",
+      "source": "programa {\n funcao inicio() {\n real a = 7.0\n real b = 2.0\n escreva(a / b)\n }\n}\n",
+      "input": "",
+      "expected": {
+        "status": "completed",
+        "stdout": "3.5"
+      }
+    },
+    {
+      "id": "P14",
+      "title": "Vetor",
+      "source": "programa {\n funcao inicio() {\n inteiro v[3] = {2, 4, 6}\n escreva(v[0] + v[2])\n }\n}\n",
+      "input": "",
+      "expected": {
+        "status": "completed",
+        "stdout": "8"
+      }
+    },
+    {
+      "id": "P15",
+      "title": "Matriz",
+      "source": "programa {\n funcao inicio() {\n inteiro m[2][2] = {{1, 2}, {3, 4}}\n escreva(m[1][0])\n }\n}\n",
+      "input": "",
+      "expected": {
+        "status": "completed",
+        "stdout": "3"
+      }
+    },
+    {
+      "id": "P16",
+      "title": "Caracteres",
+      "source": "programa {\n funcao inicio() {\n caracter c = 'A'\n escreva(c, \"!\")\n }\n}\n",
+      "input": "",
+      "expected": {
+        "status": "completed",
+        "stdout": "A!"
+      }
+    },
+    {
+      "id": "P17",
+      "title": "Valores lógicos",
+      "source": "programa {\n funcao inicio() {\n logico a = verdadeiro\n logico b = falso\n escreva(a, \":\", b)\n }\n}\n",
+      "input": "",
+      "expected": {
+        "status": "completed",
+        "stdout": "verdadeiro:falso"
+      }
+    },
+    {
+      "id": "P18",
+      "title": "Faça enquanto",
+      "source": "programa {\n funcao inicio() {\n inteiro i = 0\n faca { i++ } enquanto (i < 3)\n escreva(i)\n }\n}\n",
+      "input": "",
+      "expected": {
+        "status": "completed",
+        "stdout": "3"
+      }
+    },
+    {
+      "id": "P19",
+      "title": "Conversão implícita inteiro-real",
+      "source": "programa {\n funcao inicio() {\n inteiro a = 5\n real r = a\n escreva(r / 2.0)\n }\n}\n",
+      "input": "",
+      "expected": {
+        "status": "completed",
+        "stdout": "2.5"
+      }
+    },
+    {
+      "id": "P20",
+      "title": "Recursão",
+      "source": "programa {\n funcao inicio() {\n escreva(fatorial(5))\n }\n funcao inteiro fatorial(inteiro n) { se (n <= 1) { retorne 1 } retorne n * fatorial(n-1) }\n}\n",
+      "input": "",
+      "expected": {
+        "status": "completed",
+        "stdout": "120"
+      }
+    },
+    {
+      "id": "P21",
+      "title": "Texto Unicode",
+      "source": "programa {\n funcao inicio() {\n cadeia s = \"ação\"\n escreva(s)\n }\n}\n",
+      "input": "",
+      "expected": {
+        "status": "completed",
+        "stdout": "ação"
+      }
+    },
+    {
+      "id": "P22",
+      "title": "Entrada múltipla",
+      "source": "programa {\n funcao inicio() {\n inteiro a, b\n escreva(\"A:\")\n leia(a)\n escreva(\"B:\")\n leia(b)\n escreva(\"R:\", a+b)\n }\n}\n",
+      "input": "3\n4\n",
+      "expected": {
+        "status": "completed",
+        "stdout": "A:B:R:7"
+      }
     }
   ]
 }
