@@ -1,0 +1,105 @@
+{
+  "schema": 1,
+  "dialect": "portugol-studio",
+  "oracle": "expected hypotheses, not reference engine measurements",
+  "cases": [
+    {
+      "id": "P01",
+      "title": "Tipos e variáveis",
+      "source": "programa {\n funcao inicio() {\n inteiro n = 7\n real r = 2.5\n cadeia nome = \"Ana\"\n logico ativo = verdadeiro\n se (ativo) { escreva(nome, \":\", n, \":\", r) }\n }\n}\n",
+      "input": "",
+      "expected": {
+        "status": "completed",
+        "stdout": "Ana:7:2.5"
+      }
+    },
+    {
+      "id": "P02",
+      "title": "Entrada e saída",
+      "source": "programa {\n funcao inicio() {\n inteiro n\n leia(n)\n escreva(n + 1)\n }\n}\n",
+      "input": "41\n",
+      "expected": {
+        "status": "completed",
+        "stdout": "42"
+      }
+    },
+    {
+      "id": "P03",
+      "title": "Porcentagem",
+      "source": "programa {\n funcao inicio() {\n real salario = 2000.0\n real novo = salario * 1.10\n se (novo > 2199.99 e novo < 2200.01) { escreva(\"OK\") }\n }\n}\n",
+      "input": "",
+      "expected": {
+        "status": "completed",
+        "stdout": "OK"
+      }
+    },
+    {
+      "id": "P04",
+      "title": "Operadores",
+      "source": "programa {\n funcao inicio() {\n inteiro a = 8\n se (a >= 5 e a != 9) { escreva(\"sim\") } senao { escreva(\"nao\") }\n }\n}\n",
+      "input": "",
+      "expected": {
+        "status": "completed",
+        "stdout": "sim"
+      }
+    },
+    {
+      "id": "P05",
+      "title": "Seleção",
+      "source": "programa {\n funcao inicio() {\n inteiro n = 12\n se (n < 10) { escreva(\"A\") } senao se (n < 20) { escreva(\"B\") } senao { escreva(\"C\") }\n }\n}\n",
+      "input": "",
+      "expected": {
+        "status": "completed",
+        "stdout": "B"
+      }
+    },
+    {
+      "id": "P06",
+      "title": "Escolha",
+      "source": "programa {\n funcao inicio() {\n inteiro n = 2\n escolha (n) { caso 1: escreva(\"A\") pare caso 2: escreva(\"B\") pare caso contrario: escreva(\"C\") }\n }\n}\n",
+      "input": "",
+      "expected": {
+        "status": "completed",
+        "stdout": "B"
+      }
+    },
+    {
+      "id": "P07",
+      "title": "Repetição",
+      "source": "programa {\n funcao inicio() {\n inteiro soma = 0\n para (inteiro i = 1; i <= 5; i++) { soma = soma + i }\n escreva(soma)\n }\n}\n",
+      "input": "",
+      "expected": {
+        "status": "completed",
+        "stdout": "15"
+      }
+    },
+    {
+      "id": "P08",
+      "title": "Funções",
+      "source": "programa {\n funcao inicio() {\n escreva(dobro(21))\n }\n funcao inteiro dobro(inteiro n) { retorne n * 2 }\n}\n",
+      "input": "",
+      "expected": {
+        "status": "completed",
+        "stdout": "42"
+      }
+    },
+    {
+      "id": "P09",
+      "title": "Erro sintático",
+      "source": "programa {\n funcao inicio() {\n inteiro = 3\n }\n}\n",
+      "input": "",
+      "expected": {
+        "status": "syntax_error"
+      }
+    },
+    {
+      "id": "P10",
+      "title": "Cancelamento",
+      "source": "programa {\n funcao inicio() {\n enquanto (verdadeiro) { }\n }\n}\n",
+      "input": "",
+      "expected": {
+        "status": "timeout_or_cancelled"
+      }
+    }
+  ]
+}
