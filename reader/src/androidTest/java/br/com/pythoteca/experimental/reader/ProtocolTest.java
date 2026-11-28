@@ -5,7 +5,8 @@ import android.os.*;
 import br.com.pythoteca.protocol.Protocol;
 import java.util.concurrent.*;
 public class ProtocolTest extends Instrumentation {
-    @Override public void onCreate(Bundle args) { super.onCreate(args); start(); }
+    private String mode;
+    @Override public void onCreate(Bundle args) { super.onCreate(args); mode=args.getString("mode", "full"); start(); }
     @Override public void onStart() {
         Bundle result = new Bundle();
         HandlerThread thread = new HandlerThread("probe");
@@ -25,6 +26,18 @@ public class ProtocolTest extends Instrumentation {
             bound = c.bindService(new Intent().setClassName(Protocol.EXECUTOR, Protocol.SERVICE), conn, Context.BIND_AUTO_CREATE);
             if (!bound || !connected.await(10, TimeUnit.SECONDS)) throw new AssertionError("Bind failed");
             Messenger reply = new Messenger(new Handler(thread.getLooper(), msg -> { replies.add(Message.obtain(msg)); return true; }));
+            if ("ping".equals(mode) || "python".equals(mode)) {
+                int uid=c.getPackageManager().getPackageUid(Protocol.EXECUTOR,0);
+                boolean python="python".equals(mode);
+                Message request=Message.obtain(null,python?Protocol.PYTHON_PROBE:Protocol.PING,Protocol.VERSION,1);
+                request.replyTo=reply; remote[0].send(request);
+                Message response=replies.poll(30,TimeUnit.SECONDS);
+                if(response==null || response.what!=(python?Protocol.PYTHON_RESULT:Protocol.PONG) || response.arg1!=Protocol.VERSION || response.arg2!=1 || response.sendingUid!=uid || (python && (!response.getData().containsKey("value") || response.getData().getInt("value")!=42))) throw new AssertionError("Isolated probe failed: "+mode);
+                result.putString("stream",python?"PYTHOTECA_ISOLATED_PYTHON_OK":"PYTHOTECA_ISOLATED_PING_OK");
+                finish(Activity.RESULT_OK,result);
+                return;
+            }
+            if (!"full".equals(mode)) throw new AssertionError("Unknown mode");
             int[][] invalid = {{999,Protocol.VERSION,1},{Protocol.PING,999,1},{Protocol.PING,Protocol.VERSION,0}};
             for (int[] a : invalid) {
                 Message m = Message.obtain(null,a[0],a[1],a[2]); m.replyTo=reply; remote[0].send(m);
