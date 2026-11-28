@@ -24,6 +24,26 @@ adb shell am force-stop com.google.android.apps.nexuslauncher
 adb shell input keyevent KEYCODE_HOME
 sleep 15
 adb shell am start -W -n "$reader/.MainActivity"
+# Verify actual navigation, not just the presence of the home screen.
+tap_label() {
+  local label="$1" coords
+  for i in $(seq 1 15); do
+    if ! capture_ui; then sleep 1; continue; fi
+    if coords=$(python -c 'import sys,xml.etree.ElementTree as E,re; n=next(n for n in E.parse("/tmp/window.xml").iter("node") if n.get("text")==sys.argv[1]); a,b,c,d=map(int,re.findall(r"\d+",n.get("bounds"))); print((a+c)//2,(b+d)//2)' "$label" 2>/dev/null); then
+      adb shell input tap $coords
+      return
+    fi
+    sleep 1
+  done
+  return 1
+}
+tap_label "Abrir trilha"
+tap_label "Voltar ao início"
+tap_label "Biblioteca"
+tap_label "Arquitetura de Computadores"
+tap_label "Voltar à biblioteca"
+tap_label "Voltar ao início"
+echo PYTHOTECA_STUDY_NAVIGATION_OK
 # The shell UID is not granted the signature permission.
 denial=$(adb shell am startservice -n "$executor/.ProbeService" 2>&1 || true)
 printf '%s\n' "$denial"
