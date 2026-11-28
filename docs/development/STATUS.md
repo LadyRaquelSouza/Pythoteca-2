@@ -52,3 +52,5 @@ DISTRIBUTION-001: PR #21 integrado 53e54d1; implementação inicial na branch di
 
 ## Próximos marcos do produto
 [Sequência e frentes paralelas](PRODUCT-NEXT.md). Iniciar BRAND/DESIGN/UI; testes Suite e pendências ARCH em paralelo. Pythoteca por dentro ainda requer consolidação de inventário/ELF e distribuição.
+
+A urgência das provas é meta de entrega, não requisito arquitetural. Preservar critérios originais, contratos evolutivos e gates de segurança; se houver conflito, adiar a entrega. Ver regra de prioridade em PRODUCT-NEXT.md.
