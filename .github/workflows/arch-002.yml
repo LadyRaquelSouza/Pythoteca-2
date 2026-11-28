@@ -136,6 +136,12 @@ jobs:
           if grep -q android.permission.INTERNET /tmp/executor-permissions; then exit 1; fi
       - name: Verify native alignment and signatures
         run: bash tests/apk-inspect.sh
+      - name: Assemble and verify experimental Suite
+        run: |
+          set -euo pipefail
+          python3 tests/prepare-suite.py prepare
+          ./gradlew --no-daemon :installer:assembleDebug
+          python3 tests/prepare-suite.py verify
       - name: Collect dependency and APK inventory
         run: |
           set -euo pipefail
@@ -166,6 +172,7 @@ jobs:
             reader/build/outputs/apk/androidTest/debug/reader-debug-androidTest.apk
             ipc-test/build/outputs/apk/debug/ipc-test-debug.apk
             ipc-test/build/outputs/apk/androidTest/debug/ipc-test-debug-androidTest.apk
+            installer/build/outputs/apk/debug/installer-debug.apk
             gradlew
             gradlew.bat
             gradle/wrapper/
@@ -209,6 +216,7 @@ jobs:
         run: |
           mkdir -p dist
           cp reader/build/outputs/apk/debug/reader-debug.apk executor/build/outputs/apk/debug/executor-debug.apk dist/
+          cp installer/build/outputs/apk/debug/installer-debug.apk dist/pythoteca-suite-debug.apk
           printf '%s\n' "$GITHUB_SHA" > dist/TESTED_COMMIT
           (cd dist && sha256sum *.apk > SHA256SUMS)
           mkdir -p dist/wrapper/gradle

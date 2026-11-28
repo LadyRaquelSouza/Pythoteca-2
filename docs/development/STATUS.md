@@ -47,3 +47,5 @@ Uso inicialmente pessoal, conectado por padrão. Offline não é prioridade arqu
 
 ## Frente paralela: DISTRIBUTION-001
 PR #20 integrado em af823ee. Plano experimental em [DISTRIBUTION-001](DISTRIBUTION-001.md). Implementação pendente; não autoriza distribuição de produção nem encerra ARCH-002e3. Priorizar instalação pessoal verificável e preservar APKs independentes.
+
+DISTRIBUTION-001: PR #21 integrado 53e54d1; implementação inicial na branch distribution/001-implementation. Aguardar compilação/inspeção CI, implementar testes de instalação e tratar ciclo de vida, concorrência e callback antes de homologar. ARCH-002e3 permanece aberta; sem assinatura permanente.

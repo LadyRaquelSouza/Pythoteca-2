@@ -4,3 +4,5 @@ rootProject.name = "Pythoteca"
 include(":reader", ":executor", ":protocol")
 
 include(":ipc-test")
+
+include(":installer")
