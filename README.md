@@ -42,3 +42,7 @@ As escolhas tecnológicas e a identidade visual definitiva dependem de avaliaç�
 ## Licença
 
 Licenciamento pendente de definição. A visibilidade pública do repositório não constitui, por si só, autorização para reutilização ou redistribuição do código.
+
+### Prioridade de conectividade
+
+Uso inicial pessoal, normalmente conectado. Acesso ao catálogo pela rede é o fluxo normal; download de aulas para leitura offline permanece disponível como objetivo secundário, sem impor arquitetura offline-first. A restrição de rede do executor continua independente desta prioridade. Não confundir leitura offline com instalação ou execução do laboratório.
