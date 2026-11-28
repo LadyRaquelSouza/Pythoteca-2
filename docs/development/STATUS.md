@@ -63,3 +63,5 @@ LANG-001: PR #24 integrado 9c9e535. Contrato de domínio candidato e testes JVM 
 LANG-001 PR #25 integrado 475063b, run 46108917849 tentativa 3 12/12. LANG-002: [corpus e candidatos](LANG-002.md) na branch lang/002-conformance; referência oficial e execução isolada pendentes. Sem dependência ou alteração na Library.
 
 LANG-002 PR #26 integrado cd49118, run 46111252518 12/12 tentativa 1. LANG-002.1 branch lang/002-harness prepara resolução sem scripts e harness; revisar lockfile/licenças e isolamento antes de executar motor. Nenhuma execução ainda.
+
+LANG-002.2: PR #27 integrado d113d69; artefato de dependências conferido, lockfile versionado e execução offline em contêiner na branch lang/002-isolated-run. Aguardar evidências por caso; referência Studio, licenças e Android pendentes.
