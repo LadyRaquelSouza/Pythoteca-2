@@ -8,9 +8,17 @@ Pythoteca-2, main após PR #9: db1ef21cadbb8167ef72ee8e9a8d9fb7db04a9e5.
 ARCH-002e2 aprovado experimentalmente no head 417dbf16d821c9b8842430b749a35f917caf002a, execução 46091383922, tentativa 2, 10/10 jobs considerando as duas tentativas.
 https://github.com/LadyRaquelSouza/Pythoteca-2/actions/runs/46091383922
 
+## Continuidade documental
+
+PR #10 integrado em 17733b8fa87a0c40c9f3b022f40b1c371b427a35; head 5c41c49, run 46094319345, 12/12 jobs aprovados. Classificação conservadora de mudanças: README.md e docs/**/*.md dispensam testes funcionais quando exclusivos; workflow e demais arquivos exigem bateria completa. Caminho misto validado; este PR documental deve validar a dispensa de emuladores.
+
+Library PR #33 aberto: https://github.com/LadyRaquelSouza/Pythoteca-Library/pull/33. Capítulo e1/e2 e índice atualizados, aguardando CI e merge.
+
 ## Próxima etapa: ARCH-002e3 (planejada, não iniciada)
 
-1. Atualizar diário pedagógico na Library sobre e1/e2.
+Plano detalhado: [ARCH-002e3](ARCH-002e3.md).
+
+1. Concluir revisão e merge do PR #33 da Library.
 2. Consolidar Gradle Wrapper versionado e verificar checksum e procedência.
 3. Inventariar dependências, licenças e bibliotecas nativas, inclusive conteúdo empacotado internamente; revisar alinhamento ELF e demais requisitos aplicáveis.
 4. Validar documentação oficial sobre 16 KB e propriedades de compatibilidade. Leitura das propriedades não comprova seu efeito.
