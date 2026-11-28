@@ -6,7 +6,75 @@ on:
 permissions:
   contents: read
 jobs:
+  classify:
+    runs-on: ubuntu-24.04
+    outputs:
+      functional: ${{ steps.scope.outputs.functional }}
+      documentation: ${{ steps.scope.outputs.documentation }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: scope
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          python3 - <<'PY'
+          import os, subprocess
+          functional = documentation = True
+          if os.environ["EVENT"] == "pull_request":
+              paths = subprocess.check_output(["git", "diff", "--no-renames", "--name-only", "-z", os.environ["BASE"] + "..." + os.environ["HEAD"]]).decode("utf-8").split("\0")
+              paths = [p for p in paths if p]
+              def doc(p):
+                  return p == "README.md" or (p.startswith("docs/") and p.endswith(".md"))
+              functional = not paths or any(not doc(p) for p in paths)
+              documentation = any(doc(p) for p in paths)
+          with open(os.environ["GITHUB_OUTPUT"], "a") as out:
+              print("functional=" + str(functional).lower(), file=out)
+              print("documentation=" + str(documentation).lower(), file=out)
+          print(f"functional={functional}, documentation={documentation}")
+          PY
+  documentation:
+    needs: classify
+    if: needs.classify.outputs.documentation == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Validate documentation structure and local Markdown links
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          from urllib.parse import unquote, urlsplit
+          root = Path.cwd()
+          required = ["README.md", "STATUS.md", "history-001.md", "TEMPLATE.md"]
+          for name in required:
+              assert (root / "docs/development" / name).is_file(), name
+          errors = []
+          for p in [Path("README.md"), *Path("docs").rglob("*.md")]:
+              text = p.read_text(encoding="utf-8")
+              if not text.strip():
+                  errors.append(f"{p}: empty document")
+              text = re.sub(r'(?ms)^ *```.*?^ *```[^\n]*', '', text)
+              for link in re.findall(r'\]\(([^\s)]+)\)', text):
+                  u = urlsplit(link)
+                  if u.scheme or u.netloc or not u.path:
+                      continue
+                  target = p.parent / unquote(u.path)
+                  if not target.exists():
+                      errors.append(f"{p}: missing {link}")
+          if errors:
+              raise SystemExit("\n".join(errors))
+          print("DOCUMENTATION_OK")
+          PY
   build:
+    needs: classify
+    if: needs.classify.outputs.functional == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
@@ -138,6 +206,8 @@ jobs:
           retention-days: 14
 
   control16k:
+    needs: classify
+    if: needs.classify.outputs.functional == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     strategy:
