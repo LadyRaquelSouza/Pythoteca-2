@@ -17,4 +17,7 @@ public final class Protocol {
     public static final int PYTHON_ENDLESS_PROBE = 8;
     public static final int PYTHON_BUSY = 9;
     public static final int PYTHON_STARTED = 10;
+    public static final int JS_PROBE = 11;
+    public static final int JS_RESULT = 12;
+    public static final int JS_ERROR = 13;
 }
