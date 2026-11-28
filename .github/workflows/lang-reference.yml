@@ -5,13 +5,13 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/lang-reference.yml'
-      - 'tests/lang/portugol/inspect-reference.py'
+      - 'tests/lang/portugol/**'
 permissions:
   contents: read
 jobs:
   inspect:
     runs-on: ubuntu-24.04
-    timeout-minutes: 8
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
@@ -28,5 +28,31 @@ jobs:
         with:
           name: studio-reference-inventory
           path: ${{ runner.temp }}/reference-inventory.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Run reference corpus offline
+        run: |
+          set -euo pipefail
+          work=$(mktemp -d)
+          chmod 755 "$work"
+          mkdir "$work/experiment" "$work/results"
+          chmod 777 "$work/results"
+          python3 tests/lang/portugol/extract-reference.py "$RUNNER_TEMP/studio.zip" "$work/studio"
+          cp tests/lang/portugol/{corpus.json,run-reference.py} "$work/experiment/"
+          image=node@sha256:7c400d78797d8cbe3f6bb21d2227b86af4cd24b0014cc9f62ff989cc16de988e
+          docker pull "$image"
+          docker run --rm --network none --read-only --user 1000:1000 --cap-drop ALL \
+            --security-opt no-new-privileges:true --memory 768m --memory-swap 768m --cpus 1 \
+            --pids-limit 128 --tmpfs /tmp:rw,nosuid,size=128m \
+            --mount "type=bind,src=$work/studio,dst=/studio,readonly" \
+            --mount "type=bind,src=$work/experiment,dst=/experiment,readonly" \
+            --mount "type=bind,src=$work/results,dst=/results" \
+            --workdir /experiment --env HOME=/tmp --entrypoint python3 "$image" run-reference.py
+          cp "$work/results/reference-results.json" "$RUNNER_TEMP/"
+      - name: Preserve reference corpus evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: studio-reference-results
+          path: ${{ runner.temp }}/reference-results.json
           if-no-files-found: error
           retention-days: 14
