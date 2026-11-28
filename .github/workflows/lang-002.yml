@@ -1,4 +1,4 @@
-name: LANG-002 isolated dependency preparation
+name: LANG-002 isolated corpus
 on:
   workflow_dispatch:
   pull_request:
@@ -22,7 +22,6 @@ jobs:
           set -euo pipefail
           node --version
           npm --version
-          npm install --package-lock-only --ignore-scripts --no-audit --no-fund --registry=https://registry.npmjs.org
           npm ci --ignore-scripts --no-audit --no-fund --registry=https://registry.npmjs.org
           npm ls --all --json > dependency-tree.json
           python3 - <<'PY'
@@ -40,7 +39,38 @@ jobs:
               rows.append({"path": path, "version": meta.get("version"), "license": meta.get("license"), "scripts": meta.get("scripts", {}), "notices": sorted(x.name for x in p.iterdir() if x.name.lower().startswith(("license", "notice", "copying"))), "integrity": item["integrity"]})
           Path("dependency-evidence.json").write_text(json.dumps(rows, indent=2) + "\n")
           PY
-      - name: Preserve resolution for review before executing candidate
+      - name: Run synthetic corpus in offline restricted container
+        run: |
+          set -euo pipefail
+          root="$PWD/tests/lang/portugol"
+          work=$(mktemp -d)
+          mkdir "$work/results"
+          chmod 777 "$work/results"
+          cp "$root"/{corpus.json,run-case.cjs,run-corpus.py} "$work/"
+          cp -a "$root/node_modules" "$work/"
+          chmod -R a+rX "$work"
+          chmod 755 "$work"
+          docker pull node:22-bookworm
+          image=$(docker image inspect --format '{{index .RepoDigests 0}}' node:22-bookworm)
+          printf '%s\n' "$image" > "$work/results/image.txt"
+          docker run --rm --network none --read-only --user 1000:1000 --cap-drop ALL \
+            --security-opt no-new-privileges:true --memory 512m --memory-swap 512m --cpus 1 \
+            --pids-limit 64 --tmpfs /tmp:rw,noexec,nosuid,size=32m \
+            --mount "type=bind,src=$work,dst=/experiment,readonly" \
+            --mount "type=bind,src=$work/results,dst=/results" \
+            --workdir /experiment --env HOME=/tmp --entrypoint python3 "$image" run-corpus.py
+          cp "$work/results/"* "$root/"
+      - name: Preserve corpus evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: portugol-corpus-results
+          path: |
+            tests/lang/portugol/portugol-results.json
+            tests/lang/portugol/image.txt
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Preserve resolution for review
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: portugol-dependency-review
