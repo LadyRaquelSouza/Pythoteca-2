@@ -136,6 +136,24 @@ jobs:
           if grep -q android.permission.INTERNET /tmp/executor-permissions; then exit 1; fi
       - name: Verify native alignment and signatures
         run: bash tests/apk-inspect.sh
+      - name: Collect dependency and APK inventory
+        run: |
+          set -euo pipefail
+          mkdir -p inventory
+          printf '%s\n' "$GITHUB_SHA" > inventory/TESTED_COMMIT
+          ./gradlew --offline --no-daemon buildEnvironment :reader:buildEnvironment :executor:buildEnvironment :ipc-test:buildEnvironment :protocol:buildEnvironment > inventory/build-environment.txt
+          for module in reader executor ipc-test protocol; do
+            ./gradlew --offline --no-daemon ":$module:dependencies" > "inventory/$module-dependencies.txt"
+          done
+          python3 tests/dependency-inventory.py
+      - name: Preserve dependency inventory
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: dependency-inventory
+          path: inventory/
+          if-no-files-found: warn
+          retention-days: 14
       - name: Upload diagnostic APK inputs
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
