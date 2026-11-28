@@ -21,3 +21,7 @@ Compilação e inspeção dos três APKs; instalador sem rede; identidade e inte
 
 ## Durante
 Plano registrado; implementação e testes ainda pendentes. Homologação física da etapa ARCH-002e3 e inventário de licenças continuam abertos.
+
+## Implementação inicial
+PR #21 integrado em 53e54d178135718bf009031a969d77ad3b56a792. Módulo installer Java/API29+, sem INTERNET, permissão REQUEST_INSTALL_PACKAGES exclusiva. tests/prepare-suite.py valida identidade/versão/ABI e certificados dos APKs debug, gera assets e propriedades, verifica conteúdo e assinatura da Suite. CI compila Suite após componentes e preserva junto aos artefatos experimentais. MainActivity valida hash, identidade de pacote, versão, ABI e certificado igual ao do instalador; rejeita downgrade e assinatura existente divergente. Sessão pai e filhas, fsync, callback explícito e consentimento. Não aceita arquivos externos. Limpeza de cache e abandono de sessões pré-commit em falhas.
+Limites: assinatura debug não é identidade permanente confiável; conferir procedência externamente. Protocolo implícito pela versão experimental fixa e build conjunto, não negociação em instalador. Testes de instalação real, cancelamento, atualização, recriação, concorrência, callback Android 15 e recuperação pós-commit ainda pendentes. Artefato Suite compilado/inspecionado não deve ser chamado de Suite funcionalmente testado até teste de instalação. Reversão: remover módulo, script e etapas CI sem alterar leitor/executor. Aguardar CI.
