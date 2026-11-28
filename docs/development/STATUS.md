@@ -79,3 +79,5 @@ LANG-002.7: PR #32 integrado 3e52378; referência oficial CI aprovado, ARCH segu
 LANG-002.8: PR #33 integrado 46049a5; gate Mobile 22/22 critérios, ARCH terceira tentativa. Branch lang/002-android-js-probe testa expressão fixa via WebView no executor, sem GPL ou código arbitrário. Aguardar CI; avaliação de isolamento, provedor, licença e cancelamento pendentes. Retomar UI em branch independente.
 
 PR #34 integrado 5ef3aaa, ARCH run 46164097073 tentativa 1 12/12, JS probe fixa validada pelo teste instrumentado completo. Branch ui/001-study-shell inicia UI-001, tema e navegação com estados honestos de indisponibilidade, sem dados reais. Aguardar CI e revisar navegação; catálogo, trilha calculada, persistência, logo final, acessibilidade física pendentes. LANG-002.9 e GPL permanecem independentes.
+
+PR #35 integrado 84ad719, head 1d1fdc1, ARCH 46167497972 tentativas 10/12,11/12,12/12; navegação validada 4K/16K. CATALOG-001.1 branch catalog/001-metadata-contract: auditoria Library b327b53, 48 entradas incluindo demo, teto candidato 4 MiB; domínio de metadados e gate JVM implementados, aguardando CI. Sem acesso remoto ou alterações Library.
