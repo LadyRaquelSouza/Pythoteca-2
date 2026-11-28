@@ -61,3 +61,5 @@ A urgência das provas é meta de entrega, não requisito arquitetural. Preserva
 LANG-001: PR #24 integrado 9c9e535. Contrato de domínio candidato e testes JVM na branch lang/001-contract; aguardar CI. Triagem documental de três motores Portugol, nenhum escolhido. Transporte e execução permanecem pendentes; Library intacta.
 
 LANG-001 PR #25 integrado 475063b, run 46108917849 tentativa 3 12/12. LANG-002: [corpus e candidatos](LANG-002.md) na branch lang/002-conformance; referência oficial e execução isolada pendentes. Sem dependência ou alteração na Library.
+
+LANG-002 PR #26 integrado cd49118, run 46111252518 12/12 tentativa 1. LANG-002.1 branch lang/002-harness prepara resolução sem scripts e harness; revisar lockfile/licenças e isolamento antes de executar motor. Nenhuma execução ainda.
