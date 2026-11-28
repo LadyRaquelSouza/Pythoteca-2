@@ -16,7 +16,7 @@ Library PR #33 integrado c8d61b34; run 46095204983 aprovado. Pythoteca-2 PR #11 
 
 ## Etapa atual: ARCH-002e3.2 (coleta inicial aprovada, inventário incompleto)
 
-Library PR #34 integrado em 94c5b8c; Pythoteca-2 PR #13 integrado em 32533d9. Plano e inventário declarado em [ARCH-002e3.2](ARCH-002e3.2.md). PR #15 integrado em 9f1deef, run 46099960779 tentativa 2 12/12; artefato 15245023465 conferido. PR #16 integrado em 28ec9a6. FAILED classificados como configurações auxiliares/não resolvíveis; coleta runtime explícita implementada na branch arch/002e3-runtime-resolution. Aguardar CI, conferir JSON e depois investigar versões nativas e licenças; inventário não concluído. Sem novas dependências.
+Library PR #34 integrado em 94c5b8c; Pythoteca-2 PR #13 integrado em 32533d9. Plano e inventário declarado em [ARCH-002e3.2](ARCH-002e3.2.md). PR #15 integrado em 9f1deef, run 46099960779 tentativa 2 12/12; artefato 15245023465 conferido. PR #16 integrado em 28ec9a6. FAILED classificados como configurações auxiliares/não resolvíveis; coleta runtime explícita implementada na branch arch/002e3-runtime-resolution. PR #17 integrado 16b1f54; run 46101776466 tentativa 2 12/12, seis classpaths sem falhas. Inspeção ampliada 138/138 ELF com p_align mínimo 16384; licenças preliminares. Próximo: automatizar congruência ELF e coletar avisos e versões nativas; inventário ainda incompleto. Sem novas dependências.
 
 PR #12 integrado em 9a12903fec91344ce632b3c5457c213bf44fe7d3. ARCH-002e3.1 concluída experimentalmente: head f63d452, run 46095581452, tentativa 1: 10/12; tentativa 2: 12/12. Falhas intermitentes preservadas no [registro do Wrapper](ARCH-002e3.1.md).
 
