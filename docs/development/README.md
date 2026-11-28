@@ -16,6 +16,8 @@ Cada PR deve incluir atualização do diário ou justificar por que não precisa
 
 - [Estado atual e retomada](STATUS.md)
 - [Histórico reconstruído até ARCH-002e2](history-001.md)
+- [Plano ARCH-002e3](ARCH-002e3.md)
+- [ARCH-002e3.1: Wrapper versionado](ARCH-002e3.1.md)
 - [Modelo de registro](TEMPLATE.md)
 
 A reconstrução inicial é retrospectiva e não equivale a uma auditoria integral de todas as conversas ou logs.
