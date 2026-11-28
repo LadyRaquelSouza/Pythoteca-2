@@ -50,8 +50,8 @@ jobs:
           cp -a "$root/node_modules" "$work/"
           chmod -R a+rX "$work"
           chmod 755 "$work"
-          docker pull node:22-bookworm
-          image=$(docker image inspect --format '{{index .RepoDigests 0}}' node:22-bookworm)
+          image=node@sha256:7c400d78797d8cbe3f6bb21d2227b86af4cd24b0014cc9f62ff989cc16de988e
+          docker pull "$image"
           printf '%s\n' "$image" > "$work/results/image.txt"
           docker run --rm --network none --read-only --user 1000:1000 --cap-drop ALL \
             --security-opt no-new-privileges:true --memory 512m --memory-swap 512m --cpus 1 \
@@ -105,8 +105,8 @@ jobs:
       - name: Compare bytecode VM with synthetic corpus offline
         run: |
           set -euo pipefail
-          docker pull node:22-bookworm
-          image=$(docker image inspect --format '{{index .RepoDigests 0}}' node:22-bookworm)
+          image=node@sha256:7c400d78797d8cbe3f6bb21d2227b86af4cd24b0014cc9f62ff989cc16de988e
+          docker pull "$image"
           printf '%s\n' "$image" > "$MOBILE_WORK/results/image.txt"
           docker run --rm --network none --read-only --user 1000:1000 --cap-drop ALL \
             --security-opt no-new-privileges:true --memory 512m --memory-swap 512m --cpus 1 \
