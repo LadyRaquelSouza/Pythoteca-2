@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import resource
+import signal
 import subprocess
 import tempfile
 
@@ -29,12 +30,20 @@ for case in json.loads((ROOT / "corpus.json").read_text())["cases"]:
         with tempfile.TemporaryFile() as out, tempfile.TemporaryFile() as err:
             row = {"id": case["id"], "expected": case["expected"]}
             try:
-                p = subprocess.run([str(JAVA), "-Xmx256m", "-Djava.awt.headless=true",
+                p = subprocess.Popen([str(JAVA), "-Xmx256m", "-Djava.awt.headless=true", "-Djava.io.tmpdir=/tmp",
                     "-Dfile.encoding=UTF-8", "-jar", str(JAR), str(source), "-no-wait"],
-                    input=case["input"].encode("utf-8"), stdout=out, stderr=err,
+                    stdin=subprocess.PIPE, stdout=out, stderr=err,
                     cwd=APP, env={"PATH": str(JAVA.parent) + ":/usr/bin:/bin", "HOME": "/tmp",
-                    "LANG": "C.UTF-8"}, timeout=30, preexec_fn=limits)
-                row.update(returncode=p.returncode, status="review_required")
+                    "LANG": "C.UTF-8"}, start_new_session=True, preexec_fn=limits)
+                try:
+                    p.communicate(case["input"].encode("utf-8"), timeout=30)
+                    row.update(returncode=p.returncode, status="review_required")
+                finally:
+                    try:
+                        os.killpg(p.pid, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+                    p.wait()
             except subprocess.TimeoutExpired:
                 row.update(status="external_timeout")
             out.seek(0)
