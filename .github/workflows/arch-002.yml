@@ -95,18 +95,14 @@ jobs:
           java -version
           python3.13 --version
           sdkmanager "platforms;android-35" "build-tools;35.0.0"
-          curl --fail --silent --show-error --location https://services.gradle.org/distributions/gradle-8.11.1-bin.zip -o /tmp/gradle.zip
-          echo 'f397b287023acdba1e9f6fc5ea72d22dd63669d59ed4a289a29b1a76eee151c6  /tmp/gradle.zip' | sha256sum -c -
-          unzip -q /tmp/gradle.zip -d /tmp
-      - name: Generate and verify Gradle Wrapper
+      - name: Verify committed Gradle Wrapper
+        shell: bash
         run: |
-          bootstrap=$(mktemp -d)
-          printf 'rootProject.name = "wrapper-bootstrap"\n' > "$bootstrap/settings.gradle"
-          /tmp/gradle-8.11.1/bin/gradle -p "$bootstrap" --no-daemon wrapper --gradle-version 8.11.1 --distribution-type bin --gradle-distribution-sha256-sum f397b287023acdba1e9f6fc5ea72d22dd63669d59ed4a289a29b1a76eee151c6
-          cp "$bootstrap/gradlew" "$bootstrap/gradlew.bat" .
-          mkdir -p gradle/wrapper
-          cp "$bootstrap/gradle/wrapper/"* gradle/wrapper/
-          rm -rf "$bootstrap"
+          set -euo pipefail
+          test -x gradlew
+          echo '2db75c40782f5e8ba1fc278a5574bab070adccb2d21ca5a6e5ed840888448046  gradle/wrapper/gradle-wrapper.jar' | sha256sum -c -
+          grep -Fx 'distributionSha256Sum=f397b287023acdba1e9f6fc5ea72d22dd63669d59ed4a289a29b1a76eee151c6' gradle/wrapper/gradle-wrapper.properties
+          grep -Fx 'distributionUrl=https\://services.gradle.org/distributions/gradle-8.11.1-bin.zip' gradle/wrapper/gradle-wrapper.properties
           ./gradlew --version
       - name: Compile both debug APKs
         run: |
