@@ -14,9 +14,9 @@ PR #10 integrado em 17733b8fa87a0c40c9f3b022f40b1c371b427a35; head 5c41c49, run 
 
 Library PR #33 integrado c8d61b34; run 46095204983 aprovado. Pythoteca-2 PR #11 integrado cf29e09; run 46095232924 classificação/documentação aprovadas, todos os jobs funcionais dispensados conforme previsto.
 
-## Etapa atual: ARCH-002e3.2 (inventário inicial em andamento)
+## Etapa atual: ARCH-002e3.2 (coleta inicial aprovada, inventário incompleto)
 
-Library PR #34 integrado em 94c5b8c; Pythoteca-2 PR #13 integrado em 32533d9. Plano e inventário declarado em [ARCH-002e3.2](ARCH-002e3.2.md). Coleta experimental implementada na branch arch/002e3-inventory-collection; aguardar CI, verificar relatórios e artefatos, depois investigar licenças. Sem novas dependências.
+Library PR #34 integrado em 94c5b8c; Pythoteca-2 PR #13 integrado em 32533d9. Plano e inventário declarado em [ARCH-002e3.2](ARCH-002e3.2.md). PR #15 integrado em 9f1deef, run 46099960779 tentativa 2 12/12; artefato 15245023465 conferido. Próximo: investigar FAILED, versões nativas e licenças; inventário não concluído. Sem novas dependências.
 
 PR #12 integrado em 9a12903fec91344ce632b3c5457c213bf44fe7d3. ARCH-002e3.1 concluída experimentalmente: head f63d452, run 46095581452, tentativa 1: 10/12; tentativa 2: 12/12. Falhas intermitentes preservadas no [registro do Wrapper](ARCH-002e3.1.md).
 
@@ -41,3 +41,6 @@ Licença do projeto ainda não decidida. Sem chaves privadas ou material acadêm
 ## Retomada
 
 Conferir main, PRs e CI antes de editar. Ler histórico e ADR-001. Abrir etapa com plano registrado antes da implementação. Não fazer merge funcional sem evidência do head exato e critérios de aceite. Registrar bloqueios e próximo passo antes de encerrar a sessão.
+
+## Prioridade de produto esclarecida pela mantenedora
+Uso inicialmente pessoal, conectado por padrão. Offline não é prioridade arquitetural; download de aulas para estudo sem conexão permanece requisito secundário. Não ampliar complexidade offline sem necessidade concreta. Executor sem INTERNET continua decisão independente de segurança. A distribuição Suite offline é decisão técnica anterior, não requisito de uso diário; reavaliar seu escopo separadamente, sem revogação automática.
