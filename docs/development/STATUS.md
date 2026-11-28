@@ -54,3 +54,6 @@ DISTRIBUTION-001: PR #21 integrado 53e54d1; implementação inicial na branch di
 [Sequência e frentes paralelas](PRODUCT-NEXT.md). Iniciar BRAND/DESIGN/UI; testes Suite e pendências ARCH em paralelo. Pythoteca por dentro ainda requer consolidação de inventário/ELF e distribuição.
 
 A urgência das provas é meta de entrega, não requisito arquitetural. Preservar critérios originais, contratos evolutivos e gates de segurança; se houver conflito, adiar a entrega. Ver regra de prioridade em PRODUCT-NEXT.md.
+
+## Investigação multilinguagem
+[LANG-001](LANG-001.md): contrato comum, Portugol Studio, Java 8 e emulação pedagógica Swing (LANG-002–004), com escrita autônoma e auxílio gradual. Viabilidade não demonstrada; manter Library intacta até matriz de capacidades homologada. Preparar contratos antes de consolidar formatos de exercícios, sem reduzir segurança ou interromper frentes independentes.
