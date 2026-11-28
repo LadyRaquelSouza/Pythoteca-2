@@ -16,7 +16,7 @@ Library PR #33 integrado c8d61b34; run 46095204983 aprovado. Pythoteca-2 PR #11 
 
 ## Etapa atual: ARCH-002e3.2 (inventário inicial em andamento)
 
-Library PR #34 integrado em 94c5b8c; Pythoteca-2 PR #13 integrado em 32533d9. Plano e inventário declarado em [ARCH-002e3.2](ARCH-002e3.2.md). Próximo passo: coleta automatizada de resolução Gradle e conteúdo dos APKs, sem novas dependências.
+Library PR #34 integrado em 94c5b8c; Pythoteca-2 PR #13 integrado em 32533d9. Plano e inventário declarado em [ARCH-002e3.2](ARCH-002e3.2.md). Coleta experimental implementada na branch arch/002e3-inventory-collection; aguardar CI, verificar relatórios e artefatos, depois investigar licenças. Sem novas dependências.
 
 PR #12 integrado em 9a12903fec91344ce632b3c5457c213bf44fe7d3. ARCH-002e3.1 concluída experimentalmente: head f63d452, run 46095581452, tentativa 1: 10/12; tentativa 2: 12/12. Falhas intermitentes preservadas no [registro do Wrapper](ARCH-002e3.1.md).
 
