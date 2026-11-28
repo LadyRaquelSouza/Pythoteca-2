@@ -47,6 +47,12 @@ public class ProtocolTest extends Instrumentation {
             Message valid=Message.obtain(null,Protocol.PING,Protocol.VERSION,3); valid.replyTo=reply; remote[0].send(valid);
             Message pong=replies.poll(5,TimeUnit.SECONDS);
             if(pong==null || pong.what!=Protocol.PONG || pong.arg1!=Protocol.VERSION || pong.arg2!=3 || pong.sendingUid!=c.getPackageManager().getPackageUid(Protocol.EXECUTOR,0)) throw new AssertionError("Valid control failed");
+            Message js = Message.obtain(null, Protocol.JS_PROBE, Protocol.VERSION, 9);
+            js.replyTo = reply; remote[0].send(js);
+            Message jsResult = replies.poll(20, TimeUnit.SECONDS);
+            if (jsResult == null || jsResult.what != Protocol.JS_RESULT || jsResult.arg1 != Protocol.VERSION || jsResult.arg2 != 9 || jsResult.sendingUid != c.getPackageManager().getPackageUid(Protocol.EXECUTOR,0) || jsResult.getData().getInt("value") != 42)
+                throw new AssertionError("Fixed JavaScript probe failed");
+            android.util.Log.i("PythotecaProbe", "PYTHOTECA_JS_42_OK");
             int[][] probes = {{Protocol.PYTHON_FAIL_PROBE,Protocol.PYTHON_ERROR,0},{Protocol.PYTHON_PROBE,Protocol.PYTHON_RESULT,42},{Protocol.PYTHON_NETWORK_PROBE,Protocol.PYTHON_RESULT,1},{Protocol.PYTHON_PROBE,Protocol.PYTHON_RESULT,42}};
             int session = 10;
             for (int[] p : probes) {

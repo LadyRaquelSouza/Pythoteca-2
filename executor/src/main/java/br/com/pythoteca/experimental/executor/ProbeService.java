@@ -22,8 +22,24 @@ public final class ProbeService extends Service {
 
     private static final AtomicBoolean running = new AtomicBoolean();
     private final Messenger endpoint = new Messenger(new Handler(Looper.getMainLooper(), msg -> {
-        if (!trusted(msg.sendingUid) || (msg.what != Protocol.PING && msg.what != Protocol.PYTHON_PROBE && msg.what != Protocol.PYTHON_FAIL_PROBE && msg.what != Protocol.PYTHON_NETWORK_PROBE && msg.what != Protocol.PYTHON_ENDLESS_PROBE)
+        if (!trusted(msg.sendingUid) || (msg.what != Protocol.PING && msg.what != Protocol.PYTHON_PROBE && msg.what != Protocol.PYTHON_FAIL_PROBE && msg.what != Protocol.PYTHON_NETWORK_PROBE && msg.what != Protocol.PYTHON_ENDLESS_PROBE && msg.what != Protocol.JS_PROBE)
                 || msg.arg1 != Protocol.VERSION || msg.arg2 <= 0 || msg.replyTo == null) {
+            return true;
+        }
+        if (msg.what == Protocol.JS_PROBE) {
+            final Messenger target = msg.replyTo;
+            final int session = msg.arg2;
+            if (!running.compareAndSet(false, true)) {
+                try { target.send(Message.obtain(null, Protocol.PYTHON_BUSY, Protocol.VERSION, session)); }
+                catch (RemoteException ignored) {}
+                return true;
+            }
+            JsProbe.run(this, ok -> {
+                running.set(false);
+                Message response = Message.obtain(null, ok ? Protocol.JS_RESULT : Protocol.JS_ERROR, Protocol.VERSION, session);
+                if (ok) { Bundle data = new Bundle(); data.putInt("value", 42); response.setData(data); }
+                try { target.send(response); } catch (RemoteException ignored) {}
+            });
             return true;
         }
         if (msg.what != Protocol.PING) {

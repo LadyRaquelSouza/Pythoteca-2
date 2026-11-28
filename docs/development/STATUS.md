@@ -75,3 +75,5 @@ LANG-002.5: PR #30 integrado dcded01; LANG primeira tentativa, ARCH terceira 12/
 LANG-002.6: PR #31 integrado fc6f3e3; inventário oficial e Mobile verificados localmente. Branch lang/002-reference-run fixa hash observado e prepara execução dos 22 casos em contêiner offline; CI pendente. ARCH terceira tentativa 12/12, causas das falhas não verificadas. Sem adoção de motor, app ou Library.
 
 LANG-002.7: PR #32 integrado 3e52378; referência oficial CI aprovado, ARCH segunda tentativa 12/12. Branch lang/002-console-events implementa separação limitada de eco/saída e gate de 22 fixtures. Aguardar CI e revisar dados; licença GPL, runtime Android e integração Library pendentes.
+
+LANG-002.8: PR #33 integrado 46049a5; gate Mobile 22/22 critérios, ARCH terceira tentativa. Branch lang/002-android-js-probe testa expressão fixa via WebView no executor, sem GPL ou código arbitrário. Aguardar CI; avaliação de isolamento, provedor, licença e cancelamento pendentes. Retomar UI em branch independente.
