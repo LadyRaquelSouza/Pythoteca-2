@@ -77,3 +77,5 @@ LANG-002.6: PR #31 integrado fc6f3e3; inventário oficial e Mobile verificados l
 LANG-002.7: PR #32 integrado 3e52378; referência oficial CI aprovado, ARCH segunda tentativa 12/12. Branch lang/002-console-events implementa separação limitada de eco/saída e gate de 22 fixtures. Aguardar CI e revisar dados; licença GPL, runtime Android e integração Library pendentes.
 
 LANG-002.8: PR #33 integrado 46049a5; gate Mobile 22/22 critérios, ARCH terceira tentativa. Branch lang/002-android-js-probe testa expressão fixa via WebView no executor, sem GPL ou código arbitrário. Aguardar CI; avaliação de isolamento, provedor, licença e cancelamento pendentes. Retomar UI em branch independente.
+
+PR #34 integrado 5ef3aaa, ARCH run 46164097073 tentativa 1 12/12, JS probe fixa validada pelo teste instrumentado completo. Branch ui/001-study-shell inicia UI-001, tema e navegação com estados honestos de indisponibilidade, sem dados reais. Aguardar CI e revisar navegação; catálogo, trilha calculada, persistência, logo final, acessibilidade física pendentes. LANG-002.9 e GPL permanecem independentes.
