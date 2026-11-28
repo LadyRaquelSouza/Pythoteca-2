@@ -67,3 +67,5 @@ LANG-002 PR #26 integrado cd49118, run 46111252518 12/12 tentativa 1. LANG-002.1
 LANG-002.2: PR #27 integrado d113d69; artefato de dependências conferido, lockfile versionado e execução offline em contêiner na branch lang/002-isolated-run. Aguardar evidências por caso; referência Studio, licenças e Android pendentes.
 
 LANG-002.3: PR #28 integrado 897281c; LANG aprovado, ARCH tentativa 2 12/12. Candidato Portugol Mobile indicado pela mantenedora, ensaio comparativo isolado na branch lang/002-mobile-comparison, sem adoção GPL nem integração Android. Aguardar CI e revisar saídas brutas, eco, licenças e referência oficial.
+
+LANG-002.4: PR #29 integrado 401ee7a; LANG primeira tentativa, ARCH quinta 12/12. Artefatos comparativos conferidos, digest Node fixado, corpus ampliado a 22 casos e harness oficial preparado (ainda não executado). Referência, GPL e Android pendentes.
