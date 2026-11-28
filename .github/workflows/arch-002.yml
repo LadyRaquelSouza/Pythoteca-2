@@ -129,6 +129,7 @@ jobs:
           script: bash tests/page16k-control.sh ${{ matrix.mode }}
 
   isolated16k:
+    name: isolated16k (${{ matrix.mode }}, ${{ matrix.ram }} MB)
     needs: build
     if: ${{ !cancelled() }}
     runs-on: ubuntu-24.04
@@ -136,7 +137,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        mode: [reader, executor, both, ping, python]
+        include:
+          - {mode: reader, ram: 2048}
+          - {mode: executor, ram: 2048}
+          - {mode: both, ram: 2048}
+          - {mode: ping, ram: 2048}
+          - {mode: python, ram: 2048}
+          - {mode: python, ram: 4096}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
@@ -158,4 +165,13 @@ jobs:
           target: google_apis_ps16k
           force-avd-creation: true
           disable-animations: true
+          ram-size: ${{ matrix.ram }}M
           script: bash tests/page16k-isolated.sh ${{ matrix.mode }}
+      - name: Preserve diagnostic logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: diagnostics-${{ matrix.mode }}-${{ matrix.ram }}
+          path: diagnostics/
+          if-no-files-found: warn
+          retention-days: 14
