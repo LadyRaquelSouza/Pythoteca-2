@@ -33,7 +33,7 @@ Plano detalhado: [ARCH-002e3](ARCH-002e3.md).
 
 Android 15/API 35 prioritário; API 29–34 secundário; API <=28 fora do escopo; API >=36 progressivo. Moto G05 única referência física ativa; Galaxy A06 adiado.
 Leitor Kotlin/Compose Material3, executor Chaquopy em APK/UID separado, sem INTERNET; IPC autenticado por assinatura e UID. Não executar código arbitrário no leitor.
-Distribuição futura Suite APK offline com APKs assinados embutidos, PackageInstaller multi-package, consentimento explícito, validação de identidade, assinatura, hash, versão e ABI. Não implementado.
+Suite experimental compilada e inspecionada; instalação multi-package ainda não homologada.
 Catálogo assinado, cache offline e proteção contra rollback planejados; GUI Python ainda em investigação.
 Identidade visual aprovada como direção: glassmorphism verde/preto/branco/cinza, contraste acessível e fallback de desempenho. Logo final não aprovado.
 Licença do projeto ainda não decidida. Sem chaves privadas ou material acadêmico privado no repositório público.
@@ -48,4 +48,9 @@ Uso inicialmente pessoal, conectado por padrão. Offline não é prioridade arqu
 ## Frente paralela: DISTRIBUTION-001
 PR #20 integrado em af823ee. Plano experimental em [DISTRIBUTION-001](DISTRIBUTION-001.md). Implementação pendente; não autoriza distribuição de produção nem encerra ARCH-002e3. Priorizar instalação pessoal verificável e preservar APKs independentes.
 
-DISTRIBUTION-001: PR #21 integrado 53e54d1; implementação inicial na branch distribution/001-implementation. Aguardar compilação/inspeção CI, implementar testes de instalação e tratar ciclo de vida, concorrência e callback antes de homologar. ARCH-002e3 permanece aberta; sem assinatura permanente.
+DISTRIBUTION-001: PR #21 integrado 53e54d1; implementação inicial na branch distribution/001-implementation. PR #22 integrado em 8837980, run 46106132067 tentativa 2 12/12; empacotamento aprovado. Implementar testes de instalação e tratar ciclo de vida, concorrência e callback antes de homologar. ARCH-002e3 permanece aberta; sem assinatura permanente.
+
+## Próximos marcos do produto
+[Sequência e frentes paralelas](PRODUCT-NEXT.md). Iniciar BRAND/DESIGN/UI; testes Suite e pendências ARCH em paralelo. Pythoteca por dentro ainda requer consolidação de inventário/ELF e distribuição.
+
+A urgência das provas é meta de entrega, não requisito arquitetural. Preservar critérios originais, contratos evolutivos e gates de segurança; se houver conflito, adiar a entrega. Ver regra de prioridade em PRODUCT-NEXT.md.
