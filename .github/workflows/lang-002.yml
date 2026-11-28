@@ -121,6 +121,8 @@ jobs:
             --mount "type=bind,src=$MOBILE_WORK/experiment,dst=/experiment,readonly" \
             --mount "type=bind,src=$MOBILE_WORK/results,dst=/results" \
             --workdir /experiment --env HOME=/tmp --entrypoint python3 "$image" run-corpus.py mobile
+      - name: Validate separated console events
+        run: python3 tests/lang/portugol/check-mobile-events.py "$MOBILE_WORK/results/mobile-results.json"
       - name: Preserve comparative evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

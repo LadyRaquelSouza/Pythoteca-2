@@ -12,15 +12,37 @@ const diagnostics = [];
 const input = fixture.input.split('\n');
 if (input.at(-1) === '') input.pop();
 let value = '';
+let pendingEcho = null;
+let eventBytes = 0;
+const events = [];
+function emit(type, text = '') {
+    eventBytes += Buffer.byteLength(text);
+    if (eventBytes > 65536 || events.length >= 2048) throw new Error('event budget exceeded');
+    events.push({type, text});
+}
 const consoleAdapter = {
     get value() { return value; },
     set value(v) {
         if (Buffer.byteLength(String(v)) > 65536) throw new Error('output budget exceeded');
-        value = String(v);
+        const next = String(v);
+        if (pendingEcho !== null) {
+            if (next !== value + pendingEcho) throw new Error('unexpected input echo');
+            emit('input', pendingEcho);
+            pendingEcho = null;
+        } else if (next.startsWith(value)) {
+            if (next.length > value.length) emit('output', next.slice(value.length));
+        } else if (next === '') {
+            emit('clear');
+        } else {
+            // Upstream may reset its buffer on excessive writes. Do not guess a delta.
+            throw new Error('unexpected console buffer replacement');
+        }
+        value = next;
     },
     leia: async () => {
         if (!input.length) throw new Error('fixture input exhausted');
-        return input.shift() + '\n';
+        pendingEcho = input.shift() + '\n';
+        return pendingEcho;
     }
 };
 const runtime = new PortugolRuntime(consoleAdapter);
@@ -32,7 +54,9 @@ const report = e => diagnostics.push({type: String(e.myErrorType || ''), text: S
 const finish = status => process.stdout.write(JSON.stringify({
     id: fixture.id, status, stdout: value, errors: diagnostics,
     elapsedMs: Math.round(performance.now() - started),
-    outputIncludesInputEcho: true
+    outputIncludesInputEcho: true,
+    events,
+    programOutput: events.filter(e => e.type === 'output').map(e => e.text).join('')
 }) + '\n');
 try {
     const compiled = runtime.compilar(fixture.source, report, false);

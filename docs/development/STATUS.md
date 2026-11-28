@@ -73,3 +73,5 @@ LANG-002.4: PR #29 integrado 401ee7a; LANG primeira tentativa, ARCH quinta 12/12
 LANG-002.5: PR #30 integrado dcded01; LANG primeira tentativa, ARCH terceira 12/12. Decisão aprovada: Mobile prioritário, Design Líquido reserva sob dispatch explícito. Branch lang/002-reference inspeciona distribuição oficial standalone sem executar; hash independente ausente, referência ainda não medida. Aguardar inventário e revisar antes de extração/execução. GPL, Android e Library pendentes.
 
 LANG-002.6: PR #31 integrado fc6f3e3; inventário oficial e Mobile verificados localmente. Branch lang/002-reference-run fixa hash observado e prepara execução dos 22 casos em contêiner offline; CI pendente. ARCH terceira tentativa 12/12, causas das falhas não verificadas. Sem adoção de motor, app ou Library.
+
+LANG-002.7: PR #32 integrado 3e52378; referência oficial CI aprovado, ARCH segunda tentativa 12/12. Branch lang/002-console-events implementa separação limitada de eco/saída e gate de 22 fixtures. Aguardar CI e revisar dados; licença GPL, runtime Android e integração Library pendentes.
