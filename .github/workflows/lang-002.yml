@@ -80,3 +80,48 @@ jobs:
             tests/lang/portugol/dependency-evidence.json
           if-no-files-found: error
           retention-days: 14
+  mobile:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Fetch pinned upstream source separately
+        run: |
+          set -euo pipefail
+          upstream=$(mktemp -d)
+          git -C "$upstream" init
+          git -C "$upstream" fetch --depth 1 https://github.com/erickweil/portugolweb.git 4f150fb9ef58fef7e93ef8ceb8b932093f47f5c5
+          test "$(git -C "$upstream" rev-parse FETCH_HEAD)" = 4f150fb9ef58fef7e93ef8ceb8b932093f47f5c5
+          work=$(mktemp -d)
+          mkdir "$work/upstream" "$work/results" "$work/experiment"
+          git -C "$upstream" archive FETCH_HEAD src package.json | tar -x -C "$work/upstream"
+          cp tests/lang/portugol/{corpus.json,run-mobile-case.mjs,run-corpus.py} "$work/experiment/"
+          chmod -R a+rX "$work"
+          chmod 755 "$work"
+          chmod 777 "$work/results"
+          echo "MOBILE_WORK=$work" >> "$GITHUB_ENV"
+      - name: Compare bytecode VM with synthetic corpus offline
+        run: |
+          set -euo pipefail
+          docker pull node:22-bookworm
+          image=$(docker image inspect --format '{{index .RepoDigests 0}}' node:22-bookworm)
+          printf '%s\n' "$image" > "$MOBILE_WORK/results/image.txt"
+          docker run --rm --network none --read-only --user 1000:1000 --cap-drop ALL \
+            --security-opt no-new-privileges:true --memory 512m --memory-swap 512m --cpus 1 \
+            --pids-limit 64 --tmpfs /tmp:rw,noexec,nosuid,size=32m \
+            --mount "type=bind,src=$MOBILE_WORK/upstream,dst=/upstream,readonly" \
+            --mount "type=bind,src=$MOBILE_WORK/experiment,dst=/experiment,readonly" \
+            --mount "type=bind,src=$MOBILE_WORK/results,dst=/results" \
+            --workdir /experiment --env HOME=/tmp --entrypoint python3 "$image" run-corpus.py mobile
+      - name: Preserve comparative evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: portugol-mobile-results
+          path: |
+            ${{ env.MOBILE_WORK }}/results/mobile-results.json
+            ${{ env.MOBILE_WORK }}/results/image.txt
+          if-no-files-found: warn
+          retention-days: 14
