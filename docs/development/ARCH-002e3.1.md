@@ -10,4 +10,8 @@ Base cf29e09, plano ARCH-002e3. Manter Gradle 8.11.1, sem alterar dependências 
 - CI passa a verificar JAR, URL, checksum da distribuição e bit executável antes de executar Wrapper. Remove download/descompactação/bootstrap provisórios. Nenhuma mudança no código Android.
 
 ## Depois
-Pendente: validar SHA256 do JAR efetivamente versionado no CI, versão Gradle, build e bateria completa. Aguardar resultados antes de merge. Se falhar, investigar e manter main anterior.
+- PR #12, head f63d4528ad592c215af911310df6b46485b3b94f, [run 46095581452](https://github.com/LadyRaquelSouza/Pythoteca-2/actions/runs/46095581452).
+- Tentativa 1: 10/12 jobs aprovados. Verificação do Wrapper, compilação, identidades/permissões, alinhamento e assinaturas aprovados. Runtime integrado passou no smoke test convencional e falhou em 16 KB; logs registram ADB offline e SIGSEGV em processo Google. Ping isolado 2048 MB abortou com INSTRUMENTATION_ABORTED: System has crashed. Controles e Python isolado passaram.
+- Solicitada repetição dos jobs reprovados sem alterar head. Tentativa 2: 12/12 aprovados, todos com novos IDs na API latest; runtime 140828571508, ping 140828571626. Hipótese ambiental reforçada, causa raiz não demonstrada.
+- Squash merge do head aprovado: 9a12903fec91344ce632b3c5457c213bf44fe7d3. Consolidação documental separada para preservar o head funcional testado.
+- ARCH-002e3.1 concluída experimentalmente. Sem homologação física ARM64 ou Windows; sem requisito definitivo de RAM. Próximo passo: ARCH-002e3.2, inventário de dependências, licenças e bibliotecas nativas conforme plano.
