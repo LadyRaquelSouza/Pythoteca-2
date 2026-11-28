@@ -104,6 +104,8 @@ jobs:
           grep -Fx 'distributionSha256Sum=f397b287023acdba1e9f6fc5ea72d22dd63669d59ed4a289a29b1a76eee151c6' gradle/wrapper/gradle-wrapper.properties
           grep -Fx 'distributionUrl=https\://services.gradle.org/distributions/gradle-8.11.1-bin.zip' gradle/wrapper/gradle-wrapper.properties
           ./gradlew --version
+      - name: Test candidate execution domain contract
+        run: bash tests/execution-contract.sh
       - name: Compile both debug APKs
         run: |
           set -euo pipefail
