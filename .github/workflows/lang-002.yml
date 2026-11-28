@@ -1,6 +1,11 @@
 name: LANG-002 isolated corpus
 on:
   workflow_dispatch:
+    inputs:
+      reserve_designliquido:
+        description: Run reserve candidate comparison
+        type: boolean
+        default: false
   pull_request:
     branches: [main]
     paths:
@@ -10,6 +15,7 @@ permissions:
   contents: read
 jobs:
   prepare:
+    if: github.event_name == 'workflow_dispatch' && inputs.reserve_designliquido
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:

@@ -1,0 +1,32 @@
+name: LANG-002 official reference inspection
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/lang-reference.yml'
+      - 'tests/lang/portugol/inspect-reference.py'
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Download fixed official release asset
+        run: |
+          set -euo pipefail
+          curl --fail --location --proto '=https' --proto-redir '=https' --max-time 180 --max-filesize 132119906 \
+            'https://github.com/UNIVALI-LITE/Portugol-Studio/releases/download/v2.7.4/portugol-studio-2.7.4-linux-x64-standalone.zip' \
+            -o "$RUNNER_TEMP/studio.zip"
+          python3 tests/lang/portugol/inspect-reference.py "$RUNNER_TEMP/studio.zip" "$RUNNER_TEMP/reference-inventory.json"
+      - name: Preserve reference inventory
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: studio-reference-inventory
+          path: ${{ runner.temp }}/reference-inventory.json
+          if-no-files-found: error
+          retention-days: 14
