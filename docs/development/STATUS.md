@@ -57,3 +57,5 @@ A urgência das provas é meta de entrega, não requisito arquitetural. Preserva
 
 ## Investigação multilinguagem
 [LANG-001](LANG-001.md): contrato comum, Portugol Studio, Java 8 e emulação pedagógica Swing (LANG-002–004), com escrita autônoma e auxílio gradual. Viabilidade não demonstrada; manter Library intacta até matriz de capacidades homologada. Preparar contratos antes de consolidar formatos de exercícios, sem reduzir segurança ou interromper frentes independentes.
+
+LANG-001: PR #24 integrado 9c9e535. Contrato de domínio candidato e testes JVM na branch lang/001-contract; aguardar CI. Triagem documental de três motores Portugol, nenhum escolhido. Transporte e execução permanecem pendentes; Library intacta.
