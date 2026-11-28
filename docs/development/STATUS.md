@@ -44,3 +44,6 @@ Conferir main, PRs e CI antes de editar. Ler histórico e ADR-001. Abrir etapa c
 
 ## Prioridade de produto esclarecida pela mantenedora
 Uso inicialmente pessoal, conectado por padrão. Offline não é prioridade arquitetural; download de aulas para estudo sem conexão permanece requisito secundário. Não ampliar complexidade offline sem necessidade concreta. Executor sem INTERNET continua decisão independente de segurança. A distribuição Suite offline é decisão técnica anterior, não requisito de uso diário; reavaliar seu escopo separadamente, sem revogação automática.
+
+## Frente paralela: DISTRIBUTION-001
+PR #20 integrado em af823ee. Plano experimental em [DISTRIBUTION-001](DISTRIBUTION-001.md). Implementação pendente; não autoriza distribuição de produção nem encerra ARCH-002e3. Priorizar instalação pessoal verificável e preservar APKs independentes.
